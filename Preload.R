@@ -26,11 +26,11 @@ pkg_test <- function(x) {
 
 # List the required packages in here
 pkg_list <- c("plotly", "ggplot2", "shiny", "rstudioapi")
-cat("Required packages are succecfully loaded!", sep = "\n")
+
 # Check and install the packages and free the storage afterwards
 dum <- mclapply(pkg_list, pkg_test, mc.cores = n_core)
 rm(pkg_list, dum, pkg_test)
-
+cat("Required packages are succecfully loaded!", sep = "\n")
 
 #_____________________________________
 # This functions enables running all "sapply()"  in a parallel mode
