@@ -25,7 +25,7 @@ pkg_test <- function(x) {
 }
 
 # List the required packages in here
-pkg_list <- c("plotly", "ggplot2", "shiny", "rstudioapi","lubridate","gganimate")
+pkg_list <- c("plotly", "ggplot2", "shiny", "rstudioapi","lubridate","gganimate","knitr")
 
 # Check and install the packages and free the storage afterwards
 dum <- mclapply(pkg_list, pkg_test, mc.cores = n_core)
