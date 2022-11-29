@@ -9,7 +9,14 @@ runtime: shiny
 ```{r setup, include=FALSE}
 require("rstudioapi")
 knitr::opts_chunk$set(echo = TRUE)
+
+# Locating the file and setting up the work directory
 location <- dirname(rstudioapi::getActiveDocumentContext()$path)
+setwd(location)
+
+# Loading the required packages and data 
+source(paste(location,"preload.R", sep = "/"))
+#source(paste(location,"data_prepration.R", sep = "/"))
 ```
 
 The goal of this R Markdown document is to explore the use of Shiny for making interactive documents. Two topics are discussed in this document. The first chapter is dedicated to visualize how railway bridge components deteriorate overtime. This will provide asset managers with an overview of the how their assets behave overtime and what maintenance actives are needed. The second chapter visualizes the emission of CO2...... (We need to work on this part). 
@@ -17,6 +24,45 @@ The goal of this R Markdown document is to explore the use of Shiny for making i
 Multiple packages are used to maximize the interactivity of this document and bring the result of analysis at the tips of user fingers.
 
 ## Chapter 1: Visualising the deterioration of railway bridges
+
+This document considers an illustrative example railway network located in the canton of Bern, Switzerland. Different visualizations are created to assist infrastructure mangers in their intervention planning process. 
+
+```{r map}
+
+```
+
+
+Knowing the current condition of the assets is the first information that an asset managers want to have. This acts as a basis for the predicting the evolution of the condition states over time.  
+
+
+```{r select-input, echo=FALSE}
+  selectInput(
+  inputId = 'bridge_type',
+  label = 'Please specify the type of the bridges',
+  choices = list('Steel'=1,
+                 'Concrete'=2,
+                 'Masonry'=3,
+                 'Composite'=4,
+                 'ALL'=5)
+)
+```
+
+```{r render-plot}
+  
+```
+
+
+
+
+The evolution of the condition states overtime can be easily seen by moving the slide. 
+
+```{r slider-input}
+  sliderInput(inputId = "date_year", label = "Selected year:",
+              min = year(today()), max = year(today())+14, value = year(today()), step = 1)
+```
+
+
+
 
 
 
