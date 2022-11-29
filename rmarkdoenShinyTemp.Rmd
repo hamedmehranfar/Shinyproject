@@ -1,5 +1,5 @@
 ---
-title: "Template for shiny+Rmarkdown"
+title: "Exploring the use of Shiny in R Markdown"
 author: "Shinygroup"
 date: '2022'
 output: html_document
@@ -7,12 +7,19 @@ runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
+require("rstudioapi")
 knitr::opts_chunk$set(echo = TRUE)
+location <- dirname(rstudioapi::getActiveDocumentContext()$path)
+source(paste(location,'preload.R',sep = "/"))
 ```
 
-This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately. 
+The goal of this R Markdown document is to explore the use of Shiny for making interactive documents. Two topics are discussed in this document. The first chapter is dedicated to visualize how railway bridge components deteriorate overtime. This will provide asset managers with an overview of the how their assets behave overtime and what maintenance actives are needed. The second chapter visualizes the emission of CO2...... (We need to work on this part). 
 
-To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+Multiple packages are used to maximize the interactivity of this document and bring the result of analysis at the tips of user fingers.
+
+## Chapter 1: Visualising the deterioration of railway bridges
+
+
 
 ## Inputs and Outputs
 
