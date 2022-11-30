@@ -8,4 +8,12 @@ library(readxl)
 bridge_data <- read_excel(paste(location, "Data", "ZolBgg-xmp.xlsx", sep = "/"), sheet = "CsEvo")
 
 # Update the header with the corrected year
+#_______________________________________________________
+# Number of years we want to do the prediction for
+n_years <- 15
 
+# Prediction period
+vec_year <- c((year(today())):(year(today())+n_years-1))
+
+# Update the headers
+colnames(bridge_data)[6:20] <- vec_year
