@@ -85,9 +85,6 @@ The evolution of the condition states overtime can be easily seen by moving the 
 
 
 
-
-
-
 ## Inputs and Outputs
 
 You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
@@ -129,5 +126,5 @@ You can also use the `shinyApp` function to define an application inline rather 
 
 In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
 
-
-
+## Chapter 2: Title for this chapter
+Maybe we can find some text for here?
