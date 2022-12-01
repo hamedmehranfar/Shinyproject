@@ -9,7 +9,7 @@ In this project we are going to explore the use of Rmarkdown and Shiny to make i
 
 The structure of the project is as the following:
 
-Data/
+Data
   -bridges_coordinates.xlsx
   -Visualization-new.qgz
   -ZolBgg-xmp.xlsx
