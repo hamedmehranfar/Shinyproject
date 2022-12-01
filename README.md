@@ -14,6 +14,7 @@ The structure of the project is as the following:
   -Visualization-new.qgz\
   -ZolBgg-xmp.xlsx\
 -data_prepration.R\
--preload.R --README.md\
+-preload.R\
+-README.md\
 -rmarkdoenShinyTemp.Rmd\
 -ShinyProject.Rproj
