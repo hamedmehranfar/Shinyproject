@@ -10,7 +10,7 @@ In this project we are going to explore the use of Rmarkdown and Shiny to make i
 The structure of the project is as the following:
 
 --Data/\
---data_prepration.R
---preload.R --README.md
---rmarkdoenShinyTemp.Rmd
---ShinyProject.Rproj
+--data_prepration.R\
+--preload.R --README.md\
+--rmarkdoenShinyTemp.Rmd\
+--ShinyProject.Rproj\
