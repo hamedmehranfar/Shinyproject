@@ -16,4 +16,4 @@ The structure of the project is as the following:
 -data_prepration.R\
 -preload.R --README.md\
 -rmarkdoenShinyTemp.Rmd\
--ShinyProject.Rproj\
+-ShinyProject.Rproj
