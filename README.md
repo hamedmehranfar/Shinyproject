@@ -13,6 +13,7 @@ The structure of the project is as the following:
   * bridges_coordinates.xlsx
   * Visualization-new.qgz
   * ZolBgg-xmp.xlsx
+  * emissions.csv
 * data_prepration.R
 * preload.R
 * README.md
