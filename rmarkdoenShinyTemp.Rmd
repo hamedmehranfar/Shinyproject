@@ -25,7 +25,7 @@ Multiple packages are used to maximize the interactivity of this document and br
 
 ## Chapter 1: Visualising the deterioration of railway bridges
 
-This document considers an illustrative example railway network located in the canton of Bern, Switzerland. Different visualizations are created to assist infrastructure mangers in their intervention planning process. 
+This document considers an illustrative example railway network located in the canton of Bern, Switzerland. Different visualizations are created to assist infrastructure mangers in their intervention planning process. The figure below shows the approximate location of the canton of Bern.
 
 ```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 
@@ -79,8 +79,23 @@ d |>
 
 ```
 
-Knowing the current condition of the assets is the first information that an asset managers want to have. This acts as a basis for the predicting the evolution of the condition states over time.  
+In Switzerland asset managers use a scale of 1-5 to keep track of the condition of their asset.
 
+| Condition state | Condition description | Damage description   |
+|-----------------|-----------------------|----------------------|
+| 1               | Good                  | None                 |
+| 2               | Acceptable            | Minor                |
+| 3               | Damaged               | Significant          |
+| 4               | Poor                  | Extensive            |
+| 5               | Alarmin               | Safety is endangered |
+
+: Definition of the condition states
+
+```{r}
+
+```
+
+The first insight an asset manager wants to have is knowing the current condition of the assets. Having such information also provides a basis for the predicting the evolution of the condition states over time. By having an interactive document, asset managers can easily get the latest overview of the condition of their assets. For example, the latest overall condition of the bridges in the mentioned line can be observed per each bridge category using the dynamic bar chart below.
 
 ```{r select-input, echo=FALSE}
   selectInput(
@@ -99,21 +114,16 @@ Knowing the current condition of the assets is the first information that an ass
   
 ```
 
-
-
-
-The evolution of the condition states overtime can be easily seen by moving the slide. 
+The evolution of the condition states overtime can be easily seen by moving the slide.
 
 ```{r slider-input}
   sliderInput(inputId = "date_year", label = "Selected year:",
               min = year(today()), max = year(today())+14, value = year(today()), step = 1)
 ```
 
-
-
 ## Inputs and Outputs
 
-You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
+You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change. This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
 
 ```{r eruptions, echo=FALSE}
 inputPanel(
@@ -152,8 +162,10 @@ You can also use the `shinyApp` function to define an application inline rather 
 
 In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
 
-## Chapter 2: Worldwide CO2 Emissions 
+## Chapter 2: Worldwide CO2 Emissions
+
 World Map to show various countries and their emissions in the year 2016.
+
 ```{r}
 
 data <- read.csv(paste(location,"Data/emissions.csv", sep = "/"))
@@ -174,4 +186,3 @@ m <- leaflet() %>%
 
 m
 ```
-
