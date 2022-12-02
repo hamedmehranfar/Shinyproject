@@ -16,7 +16,7 @@ setwd(location)
 
 # Loading the required packages and data 
 source(paste(location,"preload.R", sep = "/"))
-#source(paste(location,"data_prepration.R", sep = "/"))
+source(paste(location,"data_prepration.R", sep = "/"))
 ```
 
 The goal of this R Markdown document is to explore the use of Shiny for making interactive documents. Two topics are discussed in this document. The first chapter is dedicated to visualize how railway bridge components deteriorate overtime. This will provide asset managers with an overview of the how their assets behave overtime and what maintenance actives are needed. The second chapter visualizes the emission of CO2. The markdown will provide a countrywise emissions data and then provide a projected amount to be removed from the atmosphere by the year 2050. Also, it can show the user the percentage contribution of their carbon removal efforts in the total carbon dioxide curbs required by the year 2050.
@@ -160,7 +160,7 @@ installed.packages("leaflet")
 library(leaflet)
 library(sp)
 
-data <- read.csv("emissions.csv")
+data <- read.csv(paste(location,"Data/emissions.csv", sep = "/"))
 
 #Filling any left coordinates
 data <- data[complete.cases(data),]
