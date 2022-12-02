@@ -155,11 +155,6 @@ In all of R code chunks above the `echo = FALSE` attribute is used. This is to p
 ## Chapter 2: Worldwide CO2 Emissions 
 World Map to show various countries and their emissiosn in the year 2016.
 ```{r}
-installed.packages("leaflet")
-
-library(leaflet)
-library(sp)
-
 data <- read.csv(paste(location,"Data/emissions.csv", sep = "/"))
 
 #Filling any left coordinates
