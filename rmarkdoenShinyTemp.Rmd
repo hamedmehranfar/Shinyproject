@@ -153,7 +153,7 @@ You can also use the `shinyApp` function to define an application inline rather 
 In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
 
 ## Chapter 2: Worldwide CO2 Emissions 
-World Map to show various countries and their emissiosn in the year 2016.
+World Map to show various countries and their emissions in the year 2016.
 ```{r}
 data <- read.csv(paste(location,"Data/emissions.csv", sep = "/"))
 
