@@ -27,7 +27,7 @@ Multiple packages are used to maximize the interactivity of this document and br
 
 This document considers an illustrative example railway network located in the canton of Bern, Switzerland. Different visualizations are created to assist infrastructure mangers in their intervention planning process. 
 
-```{r echo=FALSE}
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 
 # map_data_ch <- map_data('world')[map_data('world')$region == "Switzerland",]
 # swiss_map <- ggplot() +
