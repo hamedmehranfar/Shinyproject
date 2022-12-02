@@ -19,7 +19,7 @@ source(paste(location,"preload.R", sep = "/"))
 #source(paste(location,"data_prepration.R", sep = "/"))
 ```
 
-The goal of this R Markdown document is to explore the use of Shiny for making interactive documents. Two topics are discussed in this document. The first chapter is dedicated to visualize how railway bridge components deteriorate overtime. This will provide asset managers with an overview of the how their assets behave overtime and what maintenance actives are needed. The second chapter visualizes the emission of CO2...... (We need to work on this part). 
+The goal of this R Markdown document is to explore the use of Shiny for making interactive documents. Two topics are discussed in this document. The first chapter is dedicated to visualize how railway bridge components deteriorate overtime. This will provide asset managers with an overview of the how their assets behave overtime and what maintenance actives are needed. The second chapter visualizes the emission of CO2. The markdown will provide a countrywise emissions data and then provide a projected amount to be removed from the atmosphere by the year 2050. Also, it can show the user the percentage contribution of their carbon removal efforts in the total carbon dioxide curbs required by the year 2050.
 
 Multiple packages are used to maximize the interactivity of this document and bring the result of analysis at the tips of user fingers.
 
@@ -152,5 +152,31 @@ You can also use the `shinyApp` function to define an application inline rather 
 
 In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
 
-## Chapter 2: Title for this chapter
-Maybe we can find some text for here?
+## Chapter 2: Worldwide CO2 Emissions 
+World Map to show various countries and their emissiosn in the year 2016.
+```{r}
+installed.packages("leaflet")
+
+library(leaflet)
+library(sp)
+
+data <- read.csv("emissions.csv")
+
+#Filling any left coordinates
+data <- data[complete.cases(data),]
+
+#ensuring lat and long are numbers
+data$longitude <- as.numeric(data$longitude)
+data$latitude <- as.numeric(data$latitude)
+
+#creating new spatial point dataframe
+data.SP <- SpatialPointsDataFrame(data[,c(7,8)], data[,-c(7,8)])
+  
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = data, lng= ~longitude, lat= ~latitude, popup= paste(data$Country, "<br>", data$Emissions) )
+
+m
+```
+
+
