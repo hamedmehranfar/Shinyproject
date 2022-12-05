@@ -98,17 +98,20 @@ In Switzerland asset managers use a scale of 1-5 to keep track of the condition 
 The first insight an asset manager wants to have is knowing the current condition of the assets. Having such information also provides a basis for the predicting the evolution of the condition states over time. By having an interactive document, asset managers can easily get the latest overview of the condition of their assets. For example, the latest overall condition of the bridges in the mentioned line can be observed per each bridge category using the dynamic bar chart below.
 
 ```{r select-input, echo=FALSE}
+
+# Getting the input
    selectInput(
   inputId = 'bridge_type',
   label = 'Please specify the type of the bridges',
-  choices = list('Steel',
+  choices = list('ALL',
                  'Concrete',
                  'Masonry',
                  'Composite',
-                 'ALL')
+                 'Steel')
 )
 
-renderPlotly({
+# Producing the right graph according to the input!
+renderPlotly( {
 bridge_typ <- input$bridge_type
 
 if (input$bridge_type == "ALL") {
@@ -116,14 +119,14 @@ if (input$bridge_type == "ALL") {
   bar_data_2 <- components %>% count(Type, CS) %>% group_by(Type) %>% mutate(prob = (n/sum(n)*100))
   bar_plot_2<- plot_ly(bar_data_2, x = ~Type, y = ~prob , color = ~CS ,type = "bar",
                      text = ~prob %>% round() ) %>% layout(yaxis = list(ticksuffix = "%") ) 
-
-bar_plot_2
+  
 } else {
+  
   bar_data_2 <- components %>% filter(Type == bridge_typ) %>% count(Type, CS) %>% group_by(Type) %>% mutate(prob = (n/sum(n)*100))
   bar_plot_2<- plot_ly(bar_data_2, x = ~Type, y = ~prob , color = ~CS ,type = "bar",
                      text = ~prob %>% round() ) %>% layout(yaxis = list(ticksuffix = "%") ) 
 }
-})
+} )
 ```
 
 ```{r print_input, eval=FALSE, include=FALSE}
