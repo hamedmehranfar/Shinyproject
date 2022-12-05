@@ -101,13 +101,17 @@ The first insight an asset manager wants to have is knowing the current conditio
    selectInput(
   inputId = 'bridge_type',
   label = 'Please specify the type of the bridges',
-  choices = list('Steel' = 1,
-                 'Concrete' = 2,
-                 'Masonry' = 3,
-                 'Composite'= 4,
-                 'ALL' = 5)
+  choices = list('Steel',
+                 'Concrete',
+                 'Masonry',
+                 'Composite',
+                 'ALL')
 )
 
+```
+
+```{r print_input}
+renderPrint(input$bridge_type)
 ```
 
 
@@ -115,16 +119,26 @@ The first insight an asset manager wants to have is knowing the current conditio
 ```{r render-plot}
 
   output$p1 <- renderPlotly({
-    if (input$bridge_type == 1) {
-      cat(renderPrint(input$bridge_type))
+    if (input$bridge_type == "ALL") {
+    plot_ly(components,
+            x = ~Type,
+            y = ~CS,
+            type = "bar")
+    } else {
+      bar_data <- components %>% filter(Type == input$bridge_type)
+    plot_ly(bar_data,
+      x = ~Type,
+      y = ~CS,
+      type = "bar"
+    )
     }
+    
     
     
   }
     
     
   )
-  output
 ```
 
 The evolution of the condition states overtime can be easily seen by moving the slide.
