@@ -79,7 +79,7 @@ d |>
 
 ```
 
-In Switzerland asset managers use a scale of 1-5 to keep track of the condition of their asset.
+In Switzerland asset managers use a scale of 1-5 to keep track of the condition of their asset. An example of the condition state definition are shown in the table below:
 
 | Condition state | Condition description | Damage description   |
 |-----------------|-----------------------|----------------------|
@@ -91,11 +91,7 @@ In Switzerland asset managers use a scale of 1-5 to keep track of the condition 
 
 : Definition of the condition states
 
-```{r}
-
-```
-
-The first insight an asset manager wants to have is knowing the current condition of the assets. Having such information also provides a basis for the predicting the evolution of the condition states over time. By having an interactive document, asset managers can easily get the latest overview of the condition of their assets. For example, the latest overall condition of the bridges in the mentioned line can be observed per each bridge category using the dynamic bar chart below.
+The first insight an asset manager wants to have is knowing the current condition of the assets. Such information also provides a basis for the predicting the evolution of the condition states over time. By having an interactive document, asset managers can easily get the latest overview of the condition of their assets. For example, the latest overall condition of the bridges in the mentioned line can be observed per each bridge category using the dynamic bar chart below.
 
 ```{r select-input, echo=FALSE}
 
@@ -116,28 +112,24 @@ bridge_typ <- input$bridge_type
 
 if (input$bridge_type == "ALL") {
   
-  bar_data_2 <- components %>% count(Type, CS) %>% group_by(Type) %>% mutate(prob = (n/sum(n)*100))
-  bar_plot_2<- plot_ly(bar_data_2, x = ~Type, y = ~prob , color = ~CS ,type = "bar",
-                     text = ~prob %>% round() ) %>% layout(yaxis = list(ticksuffix = "%") ) 
+  bar_data_2 <- components %>% count(Type, CS) %>% group_by(Type) %>% mutate(probability = (n/sum(n)*100))
+  bar_plot_2<- plot_ly(bar_data_2, x = ~Type, y = ~probability , color = ~CS ,type = "bar",
+                     text = ~probability %>% round() ) %>% layout(yaxis = list(ticksuffix = "%") ) 
   
 } else {
   
-  bar_data_2 <- components %>% filter(Type == bridge_typ) %>% count(Type, CS) %>% group_by(Type) %>% mutate(prob = (n/sum(n)*100))
-  bar_plot_2<- plot_ly(bar_data_2, x = ~Type, y = ~prob , color = ~CS ,type = "bar",
-                     text = ~prob %>% round() ) %>% layout(yaxis = list(ticksuffix = "%") ) 
+  bar_data_2 <- components %>% filter(Type == bridge_typ) %>% count(Type, CS) %>% group_by(Type) %>% 
+    mutate(probability = (n/sum(n)*100))
+  bar_plot_2<- plot_ly(bar_data_2, x = ~Type, y = ~probability , color = ~CS ,type = "bar",
+                     text = ~probability %>% round() ) %>% layout(yaxis = list(ticksuffix = "%") ) 
 }
 } )
 ```
-
-```{r print_input, eval=FALSE, include=FALSE}
-renderPrint(input$bridge_type)
-```
+The evolution of the condition states overtime are predicted using Markov chain modelling. 
 
 
 
-```{r render-plot}
 
-```
 
 The evolution of the condition states overtime can be easily seen by moving the slide.
 
