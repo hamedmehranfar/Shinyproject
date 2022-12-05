@@ -108,9 +108,25 @@ The first insight an asset manager wants to have is knowing the current conditio
                  'ALL')
 )
 
+renderPlotly({
+bridge_typ <- input$bridge_type
+
+if (input$bridge_type == "ALL") {
+  
+  bar_data_2 <- components %>% count(Type, CS) %>% group_by(Type) %>% mutate(prob = (n/sum(n)*100))
+  bar_plot_2<- plot_ly(bar_data_2, x = ~Type, y = ~prob , color = ~CS ,type = "bar",
+                     text = ~prob %>% round() ) %>% layout(yaxis = list(ticksuffix = "%") ) 
+
+bar_plot_2
+} else {
+  bar_data_2 <- components %>% filter(Type == bridge_typ) %>% count(Type, CS) %>% group_by(Type) %>% mutate(prob = (n/sum(n)*100))
+  bar_plot_2<- plot_ly(bar_data_2, x = ~Type, y = ~prob , color = ~CS ,type = "bar",
+                     text = ~prob %>% round() ) %>% layout(yaxis = list(ticksuffix = "%") ) 
+}
+})
 ```
 
-```{r print_input}
+```{r print_input, eval=FALSE, include=FALSE}
 renderPrint(input$bridge_type)
 ```
 
@@ -118,27 +134,6 @@ renderPrint(input$bridge_type)
 
 ```{r render-plot}
 
-  output$p1 <- renderPlotly({
-    if (input$bridge_type == "ALL") {
-    plot_ly(components,
-            x = ~Type,
-            y = ~CS,
-            type = "bar")
-    } else {
-      bar_data <- components %>% filter(Type == input$bridge_type)
-    plot_ly(bar_data,
-      x = ~Type,
-      y = ~CS,
-      type = "bar"
-    )
-    }
-    
-    
-    
-  }
-    
-    
-  )
 ```
 
 The evolution of the condition states overtime can be easily seen by moving the slide.
