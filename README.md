@@ -3,28 +3,19 @@ title: "Shiny project"
 output: An interavtive document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+In this project we are going to explore the use of Rmarkdown and Shiny to make interactive reports.
 
-## GitHub Documents
+## Project structure
 
-This is an R Markdown format used for publishing markdown documents to GitHub. When you click the **Knit** button all R code chunks are run and a markdown file (.md) suitable for publishing to GitHub is generated.
+The structure of the project is as the following:
 
-## Including Code
-
-You can include R code in the document as follows:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+* Data
+  * bridges_coordinates.xlsx
+  * Visualization-new.qgz
+  * ZolBgg-xmp.xlsx
+  * emissions.csv
+* data_prepration.R
+* preload.R
+* README.md
+* rmarkdoenShinyTemp.Rmd
+* ShinyProject.Rproj
