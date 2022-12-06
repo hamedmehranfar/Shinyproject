@@ -133,12 +133,24 @@ The evolution of the condition states overtime are predicted using Markov chain 
 
 The evolution of the condition states overtime can be easily seen by moving the slide.
 
-```{r slider-input}
+```{r slider-input, echo=TRUE}
+
+
   sliderInput(inputId = "date_year", label = "Selected year:",
-              min = year(today()), max = year(today())+14, value = year(today()), step = 1)
+              min = year(today()), max = year(today())+14, value = year(today()), step = 1,
+              animate = animationOptions(interval = 500, loop = TRUE))
+
+
 ```
 
-
+```{r}
+shinyAppDir(
+  location,
+  options = list(
+    width = "100%", height = 550
+  )
+)
+```
 
 ## Chapter 2: Worldwide CO2 Emissions
 
