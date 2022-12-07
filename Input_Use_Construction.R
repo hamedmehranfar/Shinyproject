@@ -16,6 +16,10 @@ library(data.table)
 
 
 location <- dirname(rstudioapi::getActiveDocumentContext()$path)
+
+setwd("C:/Users/schmitt_j/Desktop/Shinyproject/Shinyproject")
+
+
 bridge_data <- read_excel(paste(location, "Data", "ZolBgg-xmp.xlsx", sep = "/"), sheet = "CsEvo")
 
 
