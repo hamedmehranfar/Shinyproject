@@ -25,9 +25,58 @@ Multiple packages are used to maximize the interactivity of this document and br
 
 ## Chapter 1: Visualising the deterioration of railway bridges
 
-This document considers an illustrative example railway network located in the canton of Bern, Switzerland. Different visualizations are created to assist infrastructure mangers in their intervention planning process. 
+This document considers an illustrative example railway network located in the canton of Bern, Switzerland. Different visualizations are created to assist infrastructure mangers in their intervention planning process. The figure below shows the approximate location of the canton of Bern.
 
+<<<<<<< HEAD
+In a first step, we will try to visualize the locations of the bridges in Switzerland. For this, we first read in the data pertaining to the bridges themselves, and then the data linking these bridges with their longitude and latitude. 
+
+```
+install.packages("readxl")
+library(readxl)
+
+bridges_coordinates <- read_excel("bridges_coordinates.xlsx")
+ZolBgg <- read_excel("ZolBgg-xmp.xlsx")
+
+names <- na.omit(ZolBgg[,2]) # we create a vector with the bridge names that we can add the coordinates too 
+# we use this vector to then match the coordinates with the bridges, in order to visualize them on a map 
+
+bridges_coordinates$Name
+names.bridges <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Chueelibach", "Du Lyssbach", "Jenskanal-Br.", "KDu Loeribach", 
+                   "PDu Horbengasse", "Plle Bruegg", "PU Schuepfen", "PU Bruegg mitte 3", "PU Busswil", "PU Lyss", "PU mitte 1", 
+                   "PU Muenchenbuchsee", "PU Oberfeldweg", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatten", 
+                   "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg",
+                   "SUe Steinweg", "U Bielstr.", "U Bielstrase", "U Neubrueckstrasse", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
+
+# we now rename the brige coordinates that we have
+# we will then use this to match the coordinates with the bridge names (for which we have deteoriation data)
+
+bridges_coordinates$Name <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Lyssbach", "Du Chueelibach", "Jenskanal-Br.", "KDu Loeribach", 
+                              "PDu Horbengasse", "Plle Bruegg", "PU Bruegg mitte 3", "no data", "no data", "no data", "no data", "no data", 
+                              "PU Busswil", "PU Lyss", "PU mitte 1", "no data", "no data", "no data", "no data", "no data", "PU Muenchenbuchsee", 
+                              "PU Oberfeldweg", "no data", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatte", 
+                              "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg", 
+                              "SUe Steinweg", "U Bielstr.", "U Bielstrasse", "U Neubrueckstrasse", "no data", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
+
+names.bridges <- as.data.frame(names.bridges)
+names.bridges$Name <- names.bridges$names.bridges
+
+bridges <- merge(names.bridges, bridges_coordinates, by = "Name", all.y = TRUE)
+View(bridges) 
+bridges <- subset(bridges, bridges$Name != "no data") # we now have a dataset containing only the observations for which we have data available regarding their deterioration
+bridges.noNA <- na.omit(bridges)
+
+
+# plotting the data on a map of Switzerland 
+map_data_ch <- map_data('world')[map_data('world')$region == "Switzerland",]
+swiss_map <- ggplot() + geom_polygon(data = map_data_ch,
+                                                    aes(x=long, y=lat, group = group),
+                                                   color = 'red', fill="#b01040")
+```
+
+```{r echo=FALSE}
+=======
 ```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+>>>>>>> d820fb64afddd2de172013429059a5bb3884cd70
 
 # map_data_ch <- map_data('world')[map_data('world')$region == "Switzerland",]
 # swiss_map <- ggplot() +
@@ -79,82 +128,85 @@ d |>
 
 ```
 
-Knowing the current condition of the assets is the first information that an asset managers want to have. This acts as a basis for the predicting the evolution of the condition states over time.  
+In Switzerland asset managers use a scale of 1-5 to keep track of the condition of their asset. An example of the condition state definition are shown in the table below:
 
+| Condition state | Condition description | Damage description   |
+|-----------------|-----------------------|----------------------|
+| 1               | Good                  | None                 |
+| 2               | Acceptable            | Minor                |
+| 3               | Damaged               | Significant          |
+| 4               | Poor                  | Extensive            |
+| 5               | Alarmin               | Safety is endangered |
+
+: Definition of the condition states
+
+The first insight an asset manager wants to have is knowing the current condition of the assets. Such information also provides a basis for the predicting the evolution of the condition states over time. By having an interactive document, asset managers can easily get the latest overview of the condition of their assets. For example, the latest overall condition of the bridges in the mentioned line can be observed per each bridge category using the dynamic bar chart below.
 
 ```{r select-input, echo=FALSE}
-  selectInput(
+
+# Getting the input
+   selectInput(
   inputId = 'bridge_type',
   label = 'Please specify the type of the bridges',
-  choices = list('Steel'=1,
-                 'Concrete'=2,
-                 'Masonry'=3,
-                 'Composite'=4,
-                 'ALL'=5)
+  choices = list('ALL',
+                 'Concrete',
+                 'Masonry',
+                 'Composite',
+                 'Steel')
 )
-```
 
-```{r render-plot}
+# Producing the right graph according to the input!
+renderPlotly( {
+bridge_typ <- input$bridge_type
+
+if (input$bridge_type == "ALL") {
   
+  bar_data_2 <- components %>% count(Type, CS) %>% group_by(Type) %>% mutate(probability = (n/sum(n)*100))
+  bar_plot_2<- plot_ly(bar_data_2, x = ~Type, y = ~probability , color = ~CS ,type = "bar",
+                     text = ~probability %>% round() ) %>% layout(yaxis = list(ticksuffix = "%") ) 
   
+} else {
+  
+  bar_data_2 <- components %>% filter(Type == bridge_typ) %>% count(Type, CS) %>% group_by(Type) %>% 
+    mutate(probability = (n/sum(n)*100))
+  bar_plot_2<- plot_ly(bar_data_2, x = ~Type, y = ~probability , color = ~CS ,type = "bar",
+                     text = ~probability %>% round() ) %>% layout(yaxis = list(ticksuffix = "%") ) 
+}
+} )
 ```
+The evolution of the condition states overtime are predicted using Markov chain modelling. 
 
 
 
 
-The evolution of the condition states overtime can be easily seen by moving the slide. 
 
-```{r slider-input}
+The evolution of the condition states overtime can be easily seen by moving the slide.
+
+```{r slider-input, echo=TRUE}
+
+
   sliderInput(inputId = "date_year", label = "Selected year:",
-              min = year(today()), max = year(today())+14, value = year(today()), step = 1)
+              min = year(today()), max = year(today())+14, value = year(today()), step = 1,
+              animate = animationOptions(interval = 500, loop = TRUE))
+
+
 ```
 
-
-
-## Inputs and Outputs
-
-You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
-
-```{r eruptions, echo=FALSE}
-inputPanel(
-  selectInput("n_breaks", label = "Number of bins:",
-              choices = c(10, 20, 35, 50), selected = 20),
-  
-  sliderInput("bw_adjust", label = "Bandwidth adjustment:",
-              min = 0.2, max = 2, value = 1, step = 0.2)
-)
-
-renderPlot({
-  hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
-       xlab = "Duration (minutes)", main = "Geyser eruption duration")
-  
-  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
-  lines(dens, col = "blue")
-})
-```
-
-## Embedded Application
-
-It's also possible to embed an entire Shiny application within an R Markdown document using the `shinyAppDir` function. This example embeds a Shiny application located in another directory:
-
-```{r tabsets, echo=FALSE}
+```{r}
 shinyAppDir(
-  system.file("examples/06_tabsets", package = "shiny"),
+  location,
   options = list(
     width = "100%", height = 550
   )
 )
 ```
 
-Note the use of the `height` parameter to determine how much vertical space the embedded application should occupy.
+## Chapter 2: Worldwide CO2 Emissions
 
-You can also use the `shinyApp` function to define an application inline rather then in an external directory.
-
-In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
-
-## Chapter 2: Worldwide CO2 Emissions 
 World Map to show various countries and their emissions in the year 2016.
+
 ```{r}
+
 data <- read.csv(paste(location,"Data/emissions.csv", sep = "/"))
 
 #Filling any left coordinates
@@ -173,6 +225,7 @@ m <- leaflet() %>%
 
 m
 ```
+<<<<<<< HEAD
 ```{r}
 ui <- fluidPage(
 
@@ -220,3 +273,5 @@ server <- function(input, output) {
 shinyApp(ui = ui, server = server)
 ```
 
+=======
+>>>>>>> b0c3918bcf912a0ec68a4b1d8e3a2c6f2139905e
