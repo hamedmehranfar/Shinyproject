@@ -7,7 +7,9 @@ runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
-require("rstudioapi")
+#install.packages("rmarkdown") 
+
+library("rstudioapi")
 knitr::opts_chunk$set(echo = TRUE)
 
 # Locating the file and setting up the work directory
@@ -15,7 +17,7 @@ location <- dirname(rstudioapi::getActiveDocumentContext()$path)
 setwd(location)
 
 # Loading the required packages and data 
-source(paste(location,"preload.R", sep = "/"))
+#source(paste(location,"preload.R", sep = "/"))
 source(paste(location,"data_prepration.R", sep = "/"))
 ```
 
