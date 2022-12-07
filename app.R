@@ -5,30 +5,43 @@
 ui <- fluidPage(
   
   # App title ----
-  titlePanel("Tabsets"),
+  titlePanel("Overview of evolution of conditon states over time"),
   
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
     
-    # Sidebar panel for inputs ----
+    # Sidebar panel for the years ----
     sidebarPanel(
       
+      
+      # Input: Select the component ----
+      selectInput(
+        inputId = 'component_id',
+        label = 'Please specify the component',
+        choices = unique(bridge_data$MixName)
+      ),
+      
+      
+      
+      br(),
+      
+      
+      
+      
       # Input: Select the random distribution type ----
-      radioButtons("dist", "Distribution type:",
-                   c("Normal" = "norm",
-                     "Uniform" = "unif",
-                     "Log-normal" = "lnorm",
-                     "Exponential" = "exp")),
+      sliderInput(inputId = "date_year", label = "Selected year:",
+                  min = year(today()), max = year(today())+14, value = year(today()), step = 1,
+                  animate = animationOptions(interval = 500, loop = TRUE), sep = ""),
       
       # br() element to introduce extra vertical spacing ----
       br(),
       
       # Input: Slider for the number of observations to generate ----
-      sliderInput("n",
-                  "Number of observations:",
-                  value = 500,
-                  min = 1,
-                  max = 1000)
+      #sliderInput("n",
+      #            "Number of observations:",
+      #            value = 500,
+      #            min = 1,
+      #            max = 1000)
       
     ),
     
