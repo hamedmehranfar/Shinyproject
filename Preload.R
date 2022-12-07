@@ -24,13 +24,10 @@ pkg_test <- function(x) {
 }
 
 # List the required packages in here
-<<<<<<< HEAD
-pkg_list <- c("ggplot2", "shiny","lubridate","gganimate","tidyverse","echarts4r","viridisLite","jsonlite")
-=======
+
 pkg_list <- c("plotly", "ggplot2", "shiny","lubridate","gganimate","tidyverse","echarts4r","viridisLite"
               ,"jsonlite", "leaflet", "sp", "readxl"
               )
->>>>>>> 747e174da46717ad6afd3d51ac7154d36450440b
 
 # Check and install the packages and free the storage afterwards
 dum <- mclapply(pkg_list, pkg_test, mc.cores = n_core)
