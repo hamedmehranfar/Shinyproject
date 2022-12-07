@@ -55,3 +55,4 @@ mcsapply <- function(X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE,
   else answer
 }
 cat("The initialisation was succeccful!\n")
+

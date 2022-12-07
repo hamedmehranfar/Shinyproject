@@ -27,7 +27,56 @@ Multiple packages are used to maximize the interactivity of this document and br
 
 This document considers an illustrative example railway network located in the canton of Bern, Switzerland. Different visualizations are created to assist infrastructure mangers in their intervention planning process. The figure below shows the approximate location of the canton of Bern.
 
+<<<<<<< HEAD
+In a first step, we will try to visualize the locations of the bridges in Switzerland. For this, we first read in the data pertaining to the bridges themselves, and then the data linking these bridges with their longitude and latitude. 
+
+```
+install.packages("readxl")
+library(readxl)
+
+bridges_coordinates <- read_excel("bridges_coordinates.xlsx")
+ZolBgg <- read_excel("ZolBgg-xmp.xlsx")
+
+names <- na.omit(ZolBgg[,2]) # we create a vector with the bridge names that we can add the coordinates too 
+# we use this vector to then match the coordinates with the bridges, in order to visualize them on a map 
+
+bridges_coordinates$Name
+names.bridges <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Chueelibach", "Du Lyssbach", "Jenskanal-Br.", "KDu Loeribach", 
+                   "PDu Horbengasse", "Plle Bruegg", "PU Schuepfen", "PU Bruegg mitte 3", "PU Busswil", "PU Lyss", "PU mitte 1", 
+                   "PU Muenchenbuchsee", "PU Oberfeldweg", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatten", 
+                   "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg",
+                   "SUe Steinweg", "U Bielstr.", "U Bielstrase", "U Neubrueckstrasse", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
+
+# we now rename the brige coordinates that we have
+# we will then use this to match the coordinates with the bridge names (for which we have deteoriation data)
+
+bridges_coordinates$Name <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Lyssbach", "Du Chueelibach", "Jenskanal-Br.", "KDu Loeribach", 
+                              "PDu Horbengasse", "Plle Bruegg", "PU Bruegg mitte 3", "no data", "no data", "no data", "no data", "no data", 
+                              "PU Busswil", "PU Lyss", "PU mitte 1", "no data", "no data", "no data", "no data", "no data", "PU Muenchenbuchsee", 
+                              "PU Oberfeldweg", "no data", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatte", 
+                              "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg", 
+                              "SUe Steinweg", "U Bielstr.", "U Bielstrasse", "U Neubrueckstrasse", "no data", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
+
+names.bridges <- as.data.frame(names.bridges)
+names.bridges$Name <- names.bridges$names.bridges
+
+bridges <- merge(names.bridges, bridges_coordinates, by = "Name", all.y = TRUE)
+View(bridges) 
+bridges <- subset(bridges, bridges$Name != "no data") # we now have a dataset containing only the observations for which we have data available regarding their deterioration
+bridges.noNA <- na.omit(bridges)
+
+
+# plotting the data on a map of Switzerland 
+map_data_ch <- map_data('world')[map_data('world')$region == "Switzerland",]
+swiss_map <- ggplot() + geom_polygon(data = map_data_ch,
+                                                    aes(x=long, y=lat, group = group),
+                                                   color = 'red', fill="#b01040")
+```
+
+```{r echo=FALSE}
+=======
 ```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+>>>>>>> d820fb64afddd2de172013429059a5bb3884cd70
 
 # map_data_ch <- map_data('world')[map_data('world')$region == "Switzerland",]
 # swiss_map <- ggplot() +
