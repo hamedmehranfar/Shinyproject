@@ -182,7 +182,7 @@ The evolution of the condition states overtime can be easily seen by moving the 
 
 ```{r}
 shinyAppDir(
-  paste(location, "apps/evo", sep= "/"),
+  paste(location, "apps","evo", sep= "/"),
   options = list(
     width = "100%", height = 550
   )
