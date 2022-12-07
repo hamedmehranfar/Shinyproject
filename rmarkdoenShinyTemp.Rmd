@@ -180,16 +180,6 @@ The evolution of the condition states overtime are predicted using Markov chain 
 
 The evolution of the condition states overtime can be easily seen by moving the slide.
 
-```{r slider-input, echo=TRUE}
-
-
-  sliderInput(inputId = "date_year", label = "Selected year:",
-              min = year(today()), max = year(today())+14, value = year(today()), step = 1,
-              animate = animationOptions(interval = 500, loop = TRUE))
-
-
-```
-
 ```{r}
 shinyAppDir(
   paste(location, "apps/evo", sep= "/"),
