@@ -72,6 +72,10 @@ swiss_map <- ggplot() + geom_polygon(data = map_data_ch,
 ```
 
 ```{r echo=FALSE}
+<<<<<<< HEAD
+#=======
+=======
+>>>>>>> 048c26f8aaeb437f0550e920b7304edbbbf5cace
 #```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 #>>>>>>> d820fb64afddd2de172013429059a5bb3884cd70
 
@@ -222,7 +226,7 @@ m <- leaflet() %>%
 
 m
 ```
-<<<<<<< HEAD
+
 ```{r}
 ui <- fluidPage(
 
@@ -271,4 +275,4 @@ shinyApp(ui = ui, server = server)
 ```
 
 =======
->>>>>>> b0c3918bcf912a0ec68a4b1d8e3a2c6f2139905e
+
