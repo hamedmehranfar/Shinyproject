@@ -30,12 +30,10 @@ This document considers an illustrative example railway network located in the c
 <<<<<<< HEAD
 In a first step, we will try to visualize the locations of the bridges in Switzerland. For this, we first read in the data pertaining to the bridges themselves, and then the data linking these bridges with their longitude and latitude. 
 
-```
-install.packages("readxl")
-library(readxl)
+``````{r echo=FALSE}
 
-bridges_coordinates <- read_excel("bridges_coordinates.xlsx")
-ZolBgg <- read_excel("ZolBgg-xmp.xlsx")
+bridges_coordinates <- read_excel(paste(location,"Data/bridges_coordinates.xlsx", sep = "/"))
+ZolBgg <- read_excel(paste(location,"Data/ZolBgg-xmp.xlsx", sep = "/"))
 
 names <- na.omit(ZolBgg[,2]) # we create a vector with the bridge names that we can add the coordinates too 
 # we use this vector to then match the coordinates with the bridges, in order to visualize them on a map 
@@ -74,7 +72,10 @@ swiss_map <- ggplot() + geom_polygon(data = map_data_ch,
 ```
 
 ```{r echo=FALSE}
+<<<<<<< HEAD
 #=======
+=======
+>>>>>>> 048c26f8aaeb437f0550e920b7304edbbbf5cace
 #```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 #>>>>>>> d820fb64afddd2de172013429059a5bb3884cd70
 
@@ -194,7 +195,7 @@ The evolution of the condition states overtime can be easily seen by moving the 
 
 ```{r}
 shinyAppDir(
-  location,
+  paste(location, "apps/evo", sep= "/"),
   options = list(
     width = "100%", height = 550
   )
