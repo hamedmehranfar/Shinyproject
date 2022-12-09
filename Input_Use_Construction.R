@@ -80,6 +80,13 @@ bridge_status <- bridge_data %>%
   summarise(across(year1:year15, sum))
 
 
+### Overall percentage value of bridge status ###
+
+bridge_status_new <- bridge_status[,2:16]/5
+
+bridge_status <- cbind(bridge_status[,1], bridge_status_new )
+
+
 ### Diff of each year to detect construction work ###
 
 bridge_status <- bridge_status %>% 
@@ -167,6 +174,8 @@ bridge_status$year11_sum <- sum(bridge_status$constr_year11)
 bridge_status$year12_sum <- sum(bridge_status$constr_year12)
 bridge_status$year13_sum <- sum(bridge_status$constr_year13)
 bridge_status$year14_sum <- sum(bridge_status$constr_year14)
+
+bridge_status$overall_mean <- rowMeans(bridge_status[,31:44])
 
 
 ### plot annual construction ###
