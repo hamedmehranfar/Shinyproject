@@ -55,22 +55,15 @@ colnames(bridge_data)[20] <- "year15"
 
 options(digits=3)
 
-bridge_data$year1 <- bridge_data$year1 * bridge_data$CS
-bridge_data$year2 <- bridge_data$year2 * bridge_data$CS
-bridge_data$year3 <- bridge_data$year3 * bridge_data$CS
-bridge_data$year4 <- bridge_data$year4 * bridge_data$CS
-bridge_data$year5 <- bridge_data$year5 * bridge_data$CS
-bridge_data$year6 <- bridge_data$year6 * bridge_data$CS
-bridge_data$year7 <- bridge_data$year7 * bridge_data$CS
-bridge_data$year8 <- bridge_data$year8 * bridge_data$CS
-bridge_data$year9 <- bridge_data$year9 * bridge_data$CS
-bridge_data$year10 <- bridge_data$year10 * bridge_data$CS
-bridge_data$year11 <- bridge_data$year11 * bridge_data$CS
-bridge_data$year12 <- bridge_data$year12 * bridge_data$CS
-bridge_data$year13 <- bridge_data$year13 * bridge_data$CS
-bridge_data$year14 <- bridge_data$year14 * bridge_data$CS
-bridge_data$year15 <- bridge_data$year15 * bridge_data$CS
+bridge_data <- bridge_data %>% mutate(across(year1:year15,~ .x*CS)) 
 
+
+### number of observations per bridge ###
+
+
+obs_per_bridge <- bridge_data %>% count(MixName)
+
+bridge_data <- merge(bridge_data, obs_per_bridge)
 
 
 ### Calculation of annual status of each bridge ###
@@ -79,15 +72,19 @@ bridge_status <- bridge_data %>%
   group_by(MixName) %>% 
   summarise(across(year1:year15, sum))
 
+bridge_status <- merge(bridge_status, obs_per_bridge)
+
 
 ### Overall percentage value of bridge status ###
 
-bridge_status_new <- bridge_status[,2:16]/5
+bridge_status_new <- bridge_status[,2:16]/bridge_status[,17]  
 
-bridge_status <- cbind(bridge_status[,1], bridge_status_new )
+
+bridge_status <- cbind(bridge_status[,c(1,17)], bridge_status_new )
 
 
 ### Diff of each year to detect construction work ###
+
 
 bridge_status <- bridge_status %>% 
   mutate(constr_year1 = if_else(year2 < year1,
