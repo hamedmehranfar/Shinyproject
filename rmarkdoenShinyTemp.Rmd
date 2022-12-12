@@ -7,7 +7,7 @@ runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
-#install.packages("rmarkdown") 
+
 
 library("rstudioapi")
 knitr::opts_chunk$set(echo = TRUE)
