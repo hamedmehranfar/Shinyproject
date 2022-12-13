@@ -32,6 +32,13 @@ The structure of the project is as the following:
 
 # How to run the document
 There are two ways that you can run run the interactice doument: 
- 1. Run in your local machine
+ 1. Run on your local machine
  2. Use the given link
 
+## Local machine
+To be able to run the document on your machine, you can either directly download the project folder by clicking on the link below:
+https://github.com/hamed-93/Shinyproject/archive/refs/heads/main.zip
+
+
+
+The document has been coded in the way that it can take ultimate advantage of your machine's resources, i.e., parallel computing. However, parallel computing feature only works on Linux-based machines for the moment. 
