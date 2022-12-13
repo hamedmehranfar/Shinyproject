@@ -66,4 +66,14 @@ The document has been coded in the way that it can take ultimate advantage of yo
 
 # Credits
 This document is prepared with the collaboration of a group of four. The contribution of each memeber are listed as the following:
-@hamed-93
+
+### @eileenziehmann
+
+
+### @jonas121991
+
+
+### @hitesh-ethz
+
+
+### @hamed-93
