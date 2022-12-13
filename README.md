@@ -45,9 +45,9 @@ After extracting the Zip file, you can open the document file **rmarkdoenShinyTe
 ### Alternative approaches
 You can get a clone of the repository in your local machine using [git](https://git-scm.com/) or [GitHub CLI](https://docs.github.com/en/github-cli/github-cli/about-github-cli). For the first approach, you can use following commands:
 
-`
+``
 git clone https://github.com/hamed-93/Shinyproject.git
-`
+``
 
 
 
