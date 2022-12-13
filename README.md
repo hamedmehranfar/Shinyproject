@@ -67,13 +67,13 @@ The document has been coded in the way that it can take ultimate advantage of yo
 # Credits
 This document is prepared with the collaboration of a group of four. The contribution of each memeber are listed as the following:
 
-### @eileenziehmann
+### [Eileen](https://github.com/eileenziehmann)
 
 
-### @jonas121991
+### [Jonas](https://github.com/jonas121991)
 
 
-### @hitesh-ethz
+### [Hitesh](https://github.com/hitesh-ethz)
 
 
-### @hamed-93
+### [Hamed](https://github.com/hamed-93)
