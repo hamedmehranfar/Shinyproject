@@ -50,9 +50,10 @@ git clone https://github.com/hamed-93/Shinyproject.git
 ``
 For the second approch you might want to take a look at the manual first ([GitHub CLI](https://docs.github.com/en/github-cli/github-cli/about-github-cli)). Then you can use the following command to clone the project:
 
-``
+`
 gh repo clone hamed-93/Shinyproject
-``
+`
+
 In any case, you will need to open the document file, i.e., (**the_interactive_document.Rmd**) and run it.
 
 The document has been coded in the way that it can take ultimate advantage of your machine's resources, i.e., parallel computing. However, parallel computing feature only works on Linux-based machines for the moment. 
