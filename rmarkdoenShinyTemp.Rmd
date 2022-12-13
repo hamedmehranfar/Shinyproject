@@ -173,6 +173,35 @@ if (input$bridge_type == "ALL") {
 ```
 The evolution of the condition states overtime are predicted using Markov chain modelling. 
 
+```{r, echo=FALSE}
+selectInput(
+        inputId = 'component_id',
+        label = 'Please specify the component',
+        choices = unique(bridge_data$MixName)
+)
+      # Input: Select the random distribution type ----
+      sliderInput(inputId = "date_year", label = "Selected year:",
+                  min = year(today()), max = year(today())+14, value = year(today()), step = 1,
+                  animate = animationOptions(interval = 500, loop = TRUE), sep = "")
+ renderPlotly({
+    # Prepare the data for plotting
+    
+    plt_data <- bridge_data %>% filter(MixName == input$component_id) %>% select(all_of(as.character(c((year(today())):input$date_year))))
+    plt_data <- as.data.frame (t(plt_data))
+    plt_data <- `colnames<-`(plt_data,c(1:5))
+    
+    
+    fig_2<- plot_ly(plt_data, y =~`1` , x =rownames(plt_data), name = 'CS1' ,
+                    type = 'scatter', mode = 'none', stackgroup = 'one', groupnorm = 'percent')
+    fig_2 <- fig_2 %>% add_trace(y = ~`2`, name = 'CS2')
+    fig_2 <- fig_2 %>% add_trace(y = ~`3`, name = 'CS3')
+    fig_2 <- fig_2 %>% add_trace(y = ~`4`, name = 'CS4')
+    fig_2 <- fig_2 %>% add_trace(y = ~`5`, name = 'CS5')
+    
+
+  })
+
+```
 
 
 

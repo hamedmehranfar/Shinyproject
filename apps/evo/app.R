@@ -2,6 +2,8 @@
 
 # Define UI for random distribution app ----
 
+
+
 ui <- fluidPage(
   
   # App title ----
@@ -57,6 +59,7 @@ ui <- fluidPage(
       
     )
   )
+  
 )
 
 # Define server logic for random distribution app ----
@@ -66,13 +69,17 @@ server <- function(input, output) {
   # This is called whenever the inputs change. The output functions
   # defined below then use the value computed from this expression
   d <- reactive({
-    brg_component <- input$component_id
-    time_vec <- as.character(c((year(today())):input$date_year))
+    list(
+      brg_component = input$component_id,
+      time_vec = as.character(c((year(today())):input$date_year))
+      
+    )
+    
   })
   
-  # Prepare the data for plotting
-  
-  plt_data <- bridge_data %>% filter(MixName == brg_component) %>% select(time_vec)
+  #brg_component <- input$component_id
+  #time_vec <- as.character(c((year(today())):input$date_year))
+
   # Generate a plot of the data ----
   # Also uses the inputs to build the plot label. Note that the
   # dependencies on the inputs and the data reactive expression are
@@ -80,12 +87,21 @@ server <- function(input, output) {
   # implied by the dependency graph.
   
   output$plot <- renderPlotly({
-    dist <- input$dist
-    n <- input$n
+    # Prepare the data for plotting
     
-    hist(d(),
-         main = paste("r", dist, "(", n, ")", sep = ""),
-         col = "#75AADB", border = "white")
+    plt_data <- bridge_data %>% filter(MixName == input$component_id) %>% select(all_of(as.character(c((year(today())):input$date_year))))
+    plt_data <- as.data.frame (t(plt_data))
+    plt_data <- `colnames<-`(plt_data,c(1:5))
+    
+    
+    fig_2<- plot_ly(plt_data, y =~`1` , x =rownames(plt_data), name = 'CS1' ,
+                    type = 'scatter', mode = 'none', stackgroup = 'one', groupnorm = 'percent')
+    fig_2 <- fig_2 %>% add_trace(y = ~`2`, name = 'CS2')
+    fig_2 <- fig_2 %>% add_trace(y = ~`3`, name = 'CS3')
+    fig_2 <- fig_2 %>% add_trace(y = ~`4`, name = 'CS4')
+    fig_2 <- fig_2 %>% add_trace(y = ~`5`, name = 'CS5')
+    fig_2
+
   })
   
   # Generate a summary of the data ----
@@ -95,7 +111,8 @@ server <- function(input, output) {
   
   # Generate an HTML table view of the data ----
   output$table <- renderTable({
-    d()
+    brg_component
+    
   })
   
 }
