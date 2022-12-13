@@ -31,3 +31,7 @@ The structure of the project is as the following:
 
 
 # How to run the document
+There are two ways that you can run run the interactice doument: 
+ 1. Run in your local machine
+ 2. Use the given link
+
