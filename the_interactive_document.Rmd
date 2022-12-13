@@ -28,7 +28,6 @@ Multiple packages are used to maximize the interactivity of this document and br
 
 This document considers an illustrative example railway network located in the canton of Bern, Switzerland. Different visualizations are created to assist infrastructure mangers in their intervention planning process. The figure below shows the approximate location of the canton of Bern.
 
-<<<<<<< HEAD
 In a first step, we will try to visualize the locations of the bridges in Switzerland. For this, we first read in the data pertaining to the bridges themselves, and then the data linking these bridges with their longitude and latitude. 
 
 ```{undefined eval=FALSE, include=FALSE}
