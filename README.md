@@ -63,3 +63,7 @@ The document has been coded in the way that it can take ultimate advantage of yo
 ~~You can alternatively use the following link to interact with the document even if you do not have R installed on your machine.~~
 
 *This section is still under development the link will be updated once it is ready*
+
+# Credits
+This document is prepared with the collaboration of a group of four. The contribution of each memeber are listed as the following:
+@hamed-93
