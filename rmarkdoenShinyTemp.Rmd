@@ -10,7 +10,6 @@ runtime: shiny
 #install.packages("rmarkdown") 
 
 library("rstudioapi")
-knitr::opts_chunk$set(echo = TRUE)
 
 # Locating the file and setting up the work directory
 location <- dirname(rstudioapi::getActiveDocumentContext()$path)

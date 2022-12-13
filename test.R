@@ -114,3 +114,20 @@ server <- function(input, output) {
 
 # Create Shiny app ----
 shinyApp(ui, server)
+
+
+#___________________
+ccc<-as.character(c((year(today())):(year(today())+13)))
+
+xxx<-bridge_data %>% filter(MixName == "Aarebrücke_Abutment") %>% select(all_of(ccc))
+#xxx <- xxx[,ccc]
+zx <- as.data.frame (t(xxx))
+zx <- `colnames<-`(zx,c(1:5))
+
+
+fig_2<- plot_ly(zx, y =~`1` , x =rownames(zx), name = 'CS1' ,type = 'scatter', mode = 'none', stackgroup = 'one', groupnorm = 'percent')
+fig_2 <- fig_2 %>% add_trace(y = ~`2`, name = 'CS2')
+fig_2 <- fig_2 %>% add_trace(y = ~`3`, name = 'CS3')
+fig_2 <- fig_2 %>% add_trace(y = ~`4`, name = 'CS4')
+fig_2 <- fig_2 %>% add_trace(y = ~`5`, name = 'CS5')
+fig_2

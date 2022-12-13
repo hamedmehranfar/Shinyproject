@@ -66,22 +66,20 @@ server <- function(input, output) {
   # This is called whenever the inputs change. The output functions
   # defined below then use the value computed from this expression
   d <- reactive({
-    dist <- switch(input$dist,
-                   norm = rnorm,
-                   unif = runif,
-                   lnorm = rlnorm,
-                   exp = rexp,
-                   rnorm)
-    
-    dist(input$n)
+    brg_component <- input$component_id
+    time_vec <- as.character(c((year(today())):input$date_year))
   })
   
+  # Prepare the data for plotting
+  
+  plt_data <- bridge_data %>% filter(MixName == brg_component) %>% select(time_vec)
   # Generate a plot of the data ----
   # Also uses the inputs to build the plot label. Note that the
   # dependencies on the inputs and the data reactive expression are
   # both tracked, and all expressions are called in the sequence
   # implied by the dependency graph.
-  output$plot <- renderPlot({
+  
+  output$plot <- renderPlotly({
     dist <- input$dist
     n <- input$n
     
