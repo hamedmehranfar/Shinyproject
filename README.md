@@ -36,9 +36,10 @@ There are two ways that you can run run the interactice doument:
  2. Use the given link
 
 ## Local machine
-To be able to run the document on your machine, you can either directly download the project folder by clicking on the link below:
+To be able to run the document on your machine, the simplest way is to download the project folder by clicking on the link below:
 https://github.com/hamed-93/Shinyproject/archive/refs/heads/main.zip
 
+After extracting the Zip file, you can open the document file **rmarkdoenShinyTemp.Rmd** and run it. In the first time, it might take some time to load (and probably install) all the required packages. 
 
 
 The document has been coded in the way that it can take ultimate advantage of your machine's resources, i.e., parallel computing. However, parallel computing feature only works on Linux-based machines for the moment. 
