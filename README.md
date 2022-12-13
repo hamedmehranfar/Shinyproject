@@ -45,9 +45,10 @@ After extracting the Zip file, you can open the document file **the_interactive_
 ### Alternative approaches
 You can get a clone of the repository in your local machine using [git](https://git-scm.com/) or [GitHub CLI](https://docs.github.com/en/github-cli/github-cli/about-github-cli). For the first approach, you can use the following command:
 
-``
+`
 git clone https://github.com/hamed-93/Shinyproject.git
-``
+`
+
 For the second approch you might want to take a look at the manual first ([GitHub CLI](https://docs.github.com/en/github-cli/github-cli/about-github-cli)). Then you can use the following command to clone the project:
 
 `
