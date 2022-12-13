@@ -31,7 +31,7 @@ This document considers an illustrative example railway network located in the c
 <<<<<<< HEAD
 In a first step, we will try to visualize the locations of the bridges in Switzerland. For this, we first read in the data pertaining to the bridges themselves, and then the data linking these bridges with their longitude and latitude. 
 
-``````{r echo=FALSE}
+```{undefined eval=FALSE, include=FALSE}
 
 bridges_coordinates <- read_excel(paste(location,"Data/bridges_coordinates.xlsx", sep = "/"))
 ZolBgg <- read_excel(paste(location,"Data/ZolBgg-xmp.xlsx", sep = "/"))
@@ -173,7 +173,7 @@ if (input$bridge_type == "ALL") {
 ```
 The evolution of the condition states overtime are predicted using Markov chain modelling. 
 
-```{r, echo=FALSE}
+```{r eval=FALSE, include=FALSE}
 selectInput(
         inputId = 'component_id',
         label = 'Please specify the component',
@@ -197,18 +197,17 @@ selectInput(
     fig_2 <- fig_2 %>% add_trace(y = ~`3`, name = 'CS3')
     fig_2 <- fig_2 %>% add_trace(y = ~`4`, name = 'CS4')
     fig_2 <- fig_2 %>% add_trace(y = ~`5`, name = 'CS5')
-    
+    fig_2 <- fig_2 %>% layout(title = 'Evolution of condition states over time', 
+                              xaxis = list(title = 'Year'), yaxis = list(title = 'Percentage') 
+         )
 
   })
 
 ```
 
-
-
-
 The evolution of the condition states overtime can be easily seen by moving the slide.
 
-```{r}
+```{r echo=FALSE}
 shinyAppDir(
   paste(location, "apps","evo", sep= "/"),
   options = list(

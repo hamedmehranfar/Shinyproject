@@ -125,9 +125,9 @@ zx <- as.data.frame (t(xxx))
 zx <- `colnames<-`(zx,c(1:5))
 
 
-fig_2<- plot_ly(zx, y =~`1` , x =rownames(zx), name = 'CS1' ,type = 'scatter', mode = 'none', stackgroup = 'one', groupnorm = 'percent')
-fig_2 <- fig_2 %>% add_trace(y = ~`2`, name = 'CS2')
-fig_2 <- fig_2 %>% add_trace(y = ~`3`, name = 'CS3')
-fig_2 <- fig_2 %>% add_trace(y = ~`4`, name = 'CS4')
-fig_2 <- fig_2 %>% add_trace(y = ~`5`, name = 'CS5')
-fig_2
+fig_3<- plot_ly(zx, y =~`1` , x =rownames(zx), name = 'CS1' ,type = 'scatter', mode = 'none', stackgroup = 'one', groupnorm = 'percent')
+fig_3 <- fig_3 %>% add_trace(y = ~`2`, name = 'CS2')
+fig_3 <- fig_3 %>% add_trace(y = ~`3`, name = 'CS3')
+fig_3 <- fig_3 %>% add_trace(y = ~`4`, name = 'CS4')
+fig_3 <- fig_3 %>% add_trace(y = ~`5`, name = 'CS5')
+fig_3

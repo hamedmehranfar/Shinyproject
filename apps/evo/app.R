@@ -52,9 +52,9 @@ ui <- fluidPage(
       
       # Output: Tabset w/ plot, summary, and table ----
       tabsetPanel(type = "tabs",
-                  tabPanel("Plot", plotOutput("plot")),
-                  tabPanel("Summary", verbatimTextOutput("summary")),
-                  tabPanel("Table", tableOutput("table"))
+                  tabPanel("Plot", plotlyOutput("plot")),
+                  #tabPanel("Summary", verbatimTextOutput("summary")),
+                  tabPanel("Table", dataTableOutput("table"))
       )
       
     )
@@ -62,18 +62,18 @@ ui <- fluidPage(
   
 )
 
-# Define server logic for random distribution app ----
+# Define server logic for the app ----
 server <- function(input, output) {
   
   # Reactive expression to generate the requested distribution ----
   # This is called whenever the inputs change. The output functions
   # defined below then use the value computed from this expression
   d <- reactive({
-    list(
-      brg_component = input$component_id,
+    
+      brg_component = input$component_id
       time_vec = as.character(c((year(today())):input$date_year))
       
-    )
+    
     
   })
   
@@ -100,22 +100,24 @@ server <- function(input, output) {
     fig_2 <- fig_2 %>% add_trace(y = ~`3`, name = 'CS3')
     fig_2 <- fig_2 %>% add_trace(y = ~`4`, name = 'CS4')
     fig_2 <- fig_2 %>% add_trace(y = ~`5`, name = 'CS5')
-    fig_2
+    fig_2 <- fig_2 %>% layout( #title = 'Evolution of condition states over time', 
+                                    xaxis = list(title = 'Year'), yaxis = list(title = 'Percentage') )
 
   })
   
   # Generate a summary of the data ----
-  output$summary <- renderPrint({
-    summary(d())
-  })
+  #output$summary <- renderPrint({
+  #  summary(bridge_data %>% filter(MixName == input$component_id))
+  #})
   
   # Generate an HTML table view of the data ----
-  output$table <- renderTable({
-    brg_component
+  output$table <- renderDataTable({
+    bridge_data %>% filter(MixName == input$component_id)
     
   })
   
 }
+
 
 # Create Shiny app ----
 shinyApp(ui, server)
