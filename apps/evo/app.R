@@ -54,7 +54,8 @@ ui <- fluidPage(
       tabsetPanel(type = "tabs",
                   tabPanel("Plot", plotlyOutput("plot")),
                   #tabPanel("Summary", verbatimTextOutput("summary")),
-                  tabPanel("Table", dataTableOutput("table"))
+                  tabPanel("Table", tableOutput("table")),
+                  tabPanel("Data Table", dataTableOutput("Dtable"))
       )
       
     )
@@ -109,14 +110,22 @@ server <- function(input, output) {
   #output$summary <- renderPrint({
   #  summary(bridge_data %>% filter(MixName == input$component_id))
   #})
-  
+  #col_total <- length((as.character(c((year(today())):input$date_year))))
   # Generate an HTML table view of the data ----
-  output$table <- renderDataTable({
-    bridge_data %>% filter(MixName == input$component_id)
+  output$Dtable <- renderDataTable({
+    bridge_data[,c(1:(5+length(c((year(today())):input$date_year))))] %>% filter(MixName == input$component_id)
+    
+  })
+  
+  output$table <- renderTable({
+    bridge_data[,c(1:(5+length(c((year(today())):input$date_year))))] %>% filter(MixName == input$component_id)
     
   })
   
 }
+
+
+
 
 
 # Create Shiny app ----
