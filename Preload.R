@@ -25,7 +25,7 @@ pkg_test <- function(x) {
 
 # List the required packages in here
 
-pkg_list <- c("plotly", "ggplot2", "shiny","lubridate","gganimate","tidyverse","echarts4r","viridisLite"
+pkg_list <- c("plotly", "shiny","lubridate","dplyr","echarts4r","viridisLite"
               ,"jsonlite", "leaflet", "sp", "readxl"
               )
 
