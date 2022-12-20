@@ -68,12 +68,16 @@ The document has been coded in the way that it can take ultimate advantage of yo
 This document is prepared with the collaboration of a group of four. The contribution of each memeber are listed as the following:
 
 ### [Eileen](https://github.com/eileenziehmann)
-
+Visualization of the bridge locations.
 
 ### [Jonas](https://github.com/jonas121991)
+Developement of the block for calculating the work demand for maintenance activites and related CO2 emission.
 
 
 ### [Hitesh](https://github.com/hitesh-ethz)
-
+Developement of the shiny app for CO2 calculations.
+Development of the for visualization of the CO2 emission.
 
 ### [Hamed](https://github.com/hamed-93)
+Development of the block for visualization of condition states and their overview.
+Developement of the shiny app for evolution calculation.
