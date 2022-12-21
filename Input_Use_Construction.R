@@ -23,15 +23,6 @@ setwd("C:/Users/schmitt_j/Desktop/Shinyproject/Shinyproject")
 bridge_data <- read_excel(paste(location, "Data", "ZolBgg-xmp.xlsx", sep = "/"), sheet = "CsEvo")
 
 
-### Definition of input use per unit of bridge improvement ###
-
-working_hours <- 1000
-
-concrete_use <- 5000
-
-CO2_emissions <- 7000
-
-
 ### rename year columns ###
 
 colnames(bridge_data)[6]  <- "year1"
@@ -53,7 +44,6 @@ colnames(bridge_data)[20] <- "year15"
 
 ### Pre-Step: Calculation of annual status --> value for different qualities each year ###
 
-options(digits=3)
 
 bridge_data <- bridge_data %>% mutate(across(year1:year15,~ .x*CS)) 
 
@@ -172,12 +162,10 @@ bridge_status$year12_sum <- sum(bridge_status$constr_year12)
 bridge_status$year13_sum <- sum(bridge_status$constr_year13)
 bridge_status$year14_sum <- sum(bridge_status$constr_year14)
 
-bridge_status$overall_mean <- rowMeans(bridge_status[,31:44])
-
 
 ### plot annual construction ###
 
-bridge_status_plot <- bridge_status[1,c(1,31:44)]
+bridge_status_plot <- bridge_status[1,c(1,32:45)]
 
 
 bridge_status_plot_long <- melt(setDT(bridge_status_plot), id.vars = c("MixName"))
@@ -189,11 +177,61 @@ plot(bridge_status_plot_long$year, bridge_status_plot_long$value)
 
 
 
+##################################
+##################################
+
+
+### Construction scenario ###
+
+### Overall sum of construction implementation ###
+
+
+overall_construction <- sum(bridge_status_plot_long$value)
+
+
+
+### Each "construction unit" requires the following imaginary inputs ###
+
+working_hours <- 1000 # hours
+
+concrete_use <- 5000  # tonnes
+
+CO2_emissions <- 2000 # tonnes
+
+
+### ### Each imaginary input has the following prices ###
+
+working_hour_price <- 30   # CHF/hour
+
+concrete_price <- 20       # CHF/tonne
+
+CO2_emissions <- 50        # CHF/tonne
 
 
 
 
+### Overall input use across all bridges and years ###
 
+overall_working_hours <- overall_construction * working_hours
+
+overall_concrete_use <- overall_construction * concrete_use
+
+overall_CO2_emissions <- overall_construction * CO2_emissions
+
+
+
+### Overall costs across all bridges and years ###
+
+working_hours_costs <- overall_working_hours * 30
+
+concrete_use_costs <- overall_concrete_use * 20
+
+CO2_emissions_costs <- overall_CO2_emissions * 50
+
+
+
+### Using dataset "bridge_status" to start with the worst bridge and go step by step 
+### That would be a realistic scenario, because not all bridges can simultaneously be repaired in years 10 and 11 
 
 
 
