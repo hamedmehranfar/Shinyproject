@@ -4,7 +4,6 @@
 
 # Data_Input 
 
-library(readxl)
 location <- dirname(rstudioapi::getActiveDocumentContext()$path)
 bridge_data <- read_excel(paste(location, "Data", "ZolBgg-xmp.xlsx", sep = "/"), sheet = "CsEvo")
 
@@ -18,6 +17,7 @@ vec_year <- c((year(today())):(year(today())+n_years-1))
 
 # Update the headers
 colnames(bridge_data)[6:20] <- vec_year
+rm (vec_year)
 #______________________________________________________
 #Preparing data for the bar plot
 

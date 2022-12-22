@@ -7,15 +7,16 @@ runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
-require("rstudioapi")
-knitr::opts_chunk$set(echo = TRUE)
+
+
+library("rstudioapi")
 
 # Locating the file and setting up the work directory
 location <- dirname(rstudioapi::getActiveDocumentContext()$path)
 setwd(location)
 
 # Loading the required packages and data 
-source(paste(location,"preload.R", sep = "/"))
+source(paste(location,"Preload.R", sep = "/"))
 source(paste(location,"data_prepration.R", sep = "/"))
 ```
 
@@ -27,15 +28,12 @@ Multiple packages are used to maximize the interactivity of this document and br
 
 This document considers an illustrative example railway network located in the canton of Bern, Switzerland. Different visualizations are created to assist infrastructure mangers in their intervention planning process. The figure below shows the approximate location of the canton of Bern.
 
-<<<<<<< HEAD
 In a first step, we will try to visualize the locations of the bridges in Switzerland. For this, we first read in the data pertaining to the bridges themselves, and then the data linking these bridges with their longitude and latitude. 
 
-```
-install.packages("readxl")
-library(readxl)
+```{undefined eval=FALSE, include=FALSE}
 
-bridges_coordinates <- read_excel("bridges_coordinates.xlsx")
-ZolBgg <- read_excel("ZolBgg-xmp.xlsx")
+bridges_coordinates <- read_excel(paste(location,"Data/bridges_coordinates.xlsx", sep = "/"))
+ZolBgg <- read_excel(paste(location,"Data/ZolBgg-xmp.xlsx", sep = "/"))
 
 names <- na.omit(ZolBgg[,2]) # we create a vector with the bridge names that we can add the coordinates too 
 # we use this vector to then match the coordinates with the bridges, in order to visualize them on a map 
@@ -74,9 +72,7 @@ swiss_map <- ggplot() + geom_polygon(data = map_data_ch,
 ```
 
 ```{r echo=FALSE}
-=======
-```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
->>>>>>> d820fb64afddd2de172013429059a5bb3884cd70
+#```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 
 # map_data_ch <- map_data('world')[map_data('world')$region == "Switzerland",]
 # swiss_map <- ggplot() +
@@ -176,25 +172,43 @@ if (input$bridge_type == "ALL") {
 ```
 The evolution of the condition states overtime are predicted using Markov chain modelling. 
 
+```{r eval=FALSE, include=FALSE}
+selectInput(
+        inputId = 'component_id',
+        label = 'Please specify the component',
+        choices = unique(bridge_data$MixName)
+)
+      # Input: Select the random distribution type ----
+      sliderInput(inputId = "date_year", label = "Selected year:",
+                  min = year(today()), max = year(today())+14, value = year(today()), step = 1,
+                  animate = animationOptions(interval = 500, loop = TRUE), sep = "")
+ renderPlotly({
+    # Prepare the data for plotting
+    
+    plt_data <- bridge_data %>% filter(MixName == input$component_id) %>% select(all_of(as.character(c((year(today())):input$date_year))))
+    plt_data <- as.data.frame (t(plt_data))
+    plt_data <- `colnames<-`(plt_data,c(1:5))
+    
+    
+    fig_2<- plot_ly(plt_data, y =~`1` , x =rownames(plt_data), name = 'CS1' ,
+                    type = 'scatter', mode = 'none', stackgroup = 'one', groupnorm = 'percent')
+    fig_2 <- fig_2 %>% add_trace(y = ~`2`, name = 'CS2')
+    fig_2 <- fig_2 %>% add_trace(y = ~`3`, name = 'CS3')
+    fig_2 <- fig_2 %>% add_trace(y = ~`4`, name = 'CS4')
+    fig_2 <- fig_2 %>% add_trace(y = ~`5`, name = 'CS5')
+    fig_2 <- fig_2 %>% layout(title = 'Evolution of condition states over time', 
+                              xaxis = list(title = 'Year'), yaxis = list(title = 'Percentage') 
+         )
 
-
-
-
-The evolution of the condition states overtime can be easily seen by moving the slide.
-
-```{r slider-input, echo=TRUE}
-
-
-  sliderInput(inputId = "date_year", label = "Selected year:",
-              min = year(today()), max = year(today())+14, value = year(today()), step = 1,
-              animate = animationOptions(interval = 500, loop = TRUE))
-
+  })
 
 ```
 
-```{r}
+The evolution of the condition states overtime can be easily seen by moving the slide.
+
+```{r echo=FALSE}
 shinyAppDir(
-  location,
+  paste(location, "apps","evo", sep= "/"),
   options = list(
     width = "100%", height = 550
   )
@@ -225,3 +239,18 @@ m <- leaflet() %>%
 
 m
 ```
+
+```{r}
+
+# @hitesh: I moved this shiny app into the app folder to keep the document more tidy! (Location/apps/emission)
+shinyAppDir(
+  paste(location, "apps","emission", sep= "/"),
+  options = list(
+    width = "100%", height = 550
+  )
+)
+
+```
+
+=======
+

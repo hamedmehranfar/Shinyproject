@@ -47,4 +47,6 @@ m <- leaflet() %>%
   addTiles() %>% 
   addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name))
 
+# this can now be copied into the markdown file ,
+
 m

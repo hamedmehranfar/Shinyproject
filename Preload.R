@@ -12,7 +12,6 @@ if (sys_pltform == "linux-gnu") {
   n_core <- 1
   cat("This program works the best on Linux machines\n")
 }
-
 #__________________________________
 # Install the required packages
 
@@ -25,8 +24,9 @@ pkg_test <- function(x) {
 }
 
 # List the required packages in here
-pkg_list <- c("plotly", "ggplot2", "shiny","lubridate","gganimate","tidyverse","echarts4r","viridisLite"
-              ,"jsonlite", "leaflet", "sp"
+
+pkg_list <- c("plotly", "shiny","lubridate","dplyr","echarts4r","viridisLite"
+              ,"jsonlite", "leaflet", "sp", "readxl"
               )
 
 # Check and install the packages and free the storage afterwards
