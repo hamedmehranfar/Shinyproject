@@ -100,27 +100,22 @@ swiss_map <- ggplot() + geom_polygon(data = map_data_ch,
 ```{r echo=FALSE}
 
 
-json_ch <- jsonlite::read_json(
-  "https://raw.githubusercontent.com/mbannert/maps/master/ch_bfs_regions.geojson"
+ChMap <- read_json("https://code.highcharts.com/mapdata/countries/ch/ch-all.geo.json")
+
+df <- data.frame(
+  region = c("Bern"), 
+  value = c(1)
 )
 
-d <- data.frame(
-  name = c("Zürich",
-           "Ticino",
-           "Zentralschweiz",
-           "Nordwestschweiz",
-           "Espace Mittelland",
-           "Région lémanique",
-           "Ostschweiz"),
-  values = c(20,20,20,20,100,20,20)
-)
+df |> 
+  e_charts(region) |>
+  e_map_register("CH",ChMap) |> 
+  e_map(value, map = "CH") |> 
+  e_visual_map(value, inRange = list(color = viridis(2))) |>
+  e_dims(height="auto", width = "auto")
+  #e_theme("infographic")
 
-d |>
-  e_charts(name) |>
-  e_map_register("CH", json_ch) |>
-  e_map(serie = values, map = "CH") |>
-  e_visual_map(values,
-               inRange = list(color = viridis(7)))
+rm (ChMap)
 
 ```
 
