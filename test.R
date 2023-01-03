@@ -1,33 +1,3 @@
-
-json_ch <- jsonlite::read_json(
-  "https://raw.githubusercontent.com/mbannert/maps/master/ch_bfs_regions.geojson"
-)
-
-d <- data.frame(
-  name = c("Zürich",
-           "Ticino",
-           "Zentralschweiz",
-           "Nordwestschweiz",
-           "Espace Mittelland",
-           "Région lémanique",
-           "Ostschweiz"),
-  values = c(20,20,20,20,100,20,20)
-)
-
-d |>
-  e_charts(name) |>
-  e_map_register("CH", json_ch) |>
-  e_map(serie = values, map = "CH") |>
-  e_visual_map(values,
-               inRange = list(color = viridis(7)))
-
-
-
-
-
-
-
-
 bar_data <- components %>% filter(Type == "Steel")
 
 bar_data_1 <- bar_data %>% count(Type, CS) %>% group_by(Type) %>% mutate(prob = (n/sum(n)*100))

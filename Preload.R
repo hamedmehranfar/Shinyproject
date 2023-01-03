@@ -1,6 +1,5 @@
 # This script is written to ensure all-
 # prerequisite materials are loaded to the system.
-
 #__________________________________
 # Adjust the program according to the platform
 library("parallel")
@@ -25,8 +24,8 @@ pkg_list <- c("plotly", "shiny","lubridate","dplyr","echarts4r","viridisLite"
 dum <- mclapply(pkg_list, library, character.only = TRUE, mc.cores = n_core)
 rm(pkg_list)
 cat("Required packages are succecfully loaded!\n")
-
 #_____________________________________
+
 # This functions enables running all "sapply()"  in a parallel mode
 
 mcsapply <- function(X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE,
@@ -47,4 +46,3 @@ mcsapply <- function(X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE,
   else answer
 }
 cat("The initialisation was succeccful!\n")
-
