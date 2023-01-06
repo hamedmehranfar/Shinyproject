@@ -230,7 +230,7 @@ data.SP <- SpatialPointsDataFrame(data[,c(7,8)], data[,-c(7,8)])
   
 m <- leaflet() %>% 
   addTiles() %>% 
-  addMarkers(data = data, lng= ~longitude, lat= ~latitude, popup= paste(data$Country, "<br>", data$Emissions) )
+  addCircleMarkers(data = data, lng= ~longitude, lat= ~latitude, popup= paste(data$Country, "<br>", data$Emissions) )
 
 m
 ```
