@@ -2,6 +2,7 @@
 # prerequisite materials are loaded to the system.
 #__________________________________
 # Adjust the program according to the platform
+
 library("parallel")
 sys_pltform <- R.version$os
 if (sys_pltform == "linux-gnu") {
@@ -17,7 +18,7 @@ if (sys_pltform == "linux-gnu") {
 # List the required packages in here
 
 pkg_list <- c("plotly", "shiny","lubridate","dplyr","echarts4r","viridisLite"
-              ,"jsonlite", "leaflet", "sp", "readxl"
+              ,"jsonlite", "leaflet", "sp", "readxl", "here"
               )
 
 # Check and install the packages and free the storage afterwards
