@@ -9,10 +9,10 @@ runtime: shiny
 ```{r setup, include=FALSE}
 
 
-library("rstudioapi")
+library(here)
 
 # Locating the file and setting up the work directory
-location <- dirname(rstudioapi::getActiveDocumentContext()$path)
+location <- here()
 setwd(location)
 
 # Loading the required packages and data 
