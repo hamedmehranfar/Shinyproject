@@ -5,8 +5,8 @@ library(sp)
 library(dplyr)
 library(leaflet)
 
-bridges_coordinates <- read_excel("bridges_coordinates.xlsx")
-ZolBgg <- read_excel("ZolBgg-xmp.xlsx")
+bridges_coordinates <- read_excel(paste(location,"Data/bridges_coordinates.xlsx", sep = "/"))
+ZolBgg <- read_excel(paste(location,"Data/ZolBgg-xmp.xlsx", sep = "/"))
 
 names <- na.omit(ZolBgg[,2]) # we create a vector with the bridge names that we can add the coordinates too 
 # we use this vector to then match the coordinates with the bridges, in order to visualize them on a map 
@@ -32,7 +32,7 @@ names.bridges <- as.data.frame(names.bridges)
 names.bridges$Name <- names.bridges$names.bridges
 
 bridges <- merge(names.bridges, bridges_coordinates, by = "Name", all.y = TRUE)
-View(bridges) 
+#View(bridges) 
 bridges <- subset(bridges, bridges$Name != "no data") # we now have a dataset containing only the observations for which we have data available regarding their deterioration
 bridges.noNA <- na.omit(bridges)
 
@@ -50,3 +50,4 @@ m <- leaflet() %>%
 # this can now be copied into the markdown file ,
 
 m
+
