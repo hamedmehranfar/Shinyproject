@@ -1,5 +1,5 @@
-install.packages("readxl")
-install.packages("leaflet")
+#install.packages("readxl")
+#install.packages("leaflet")
 library(readxl)
 library(sp)
 library(dplyr)
@@ -43,7 +43,7 @@ bridges.noNA$latitude <- as.numeric(bridges.noNA$latitude)
 #creating new spatial point dataframe
 bridges.SP <- SpatialPointsDataFrame(bridges.noNA[,c(3,4)], bridges.noNA[,-c(3,4)])
 
-m <- leaflet() %>% 
+bridge_map <- leaflet() %>% 
   addTiles() %>% 
   addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name))
 
