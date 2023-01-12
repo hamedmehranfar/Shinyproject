@@ -75,7 +75,8 @@ df |>
 rm (ChMap)
 
 ```
-In the next step, the location of the selected bridge portfolio in this canton is visualized in an interactive map. For this, we first read in the data pertaining to the bridges themselves, and then the data linking these bridges with their longitude and latitude. 
+
+In the next step, the location of the selected bridge portfolio in this canton is visualized in an interactive map. For this, we first read in the data pertaining to the bridges themselves, and then the data linking these bridges with their longitude and latitude.
 
 ```{r echo=FALSE}
 
@@ -135,7 +136,7 @@ In Switzerland asset managers use a scale of 1-5 to keep track of the condition 
 
 : Definition of the condition states
 
-The first insight an asset manager wants to have is knowing the current condition of the assets. Such information also provides a basis for the predicting the evolution of the condition states over time. By having an interactive document, asset managers can easily get the latest overview of the condition of their assets. For example, the latest overall condition of the bridges in the mentioned line can be observed per each bridge category using the dynamic bar chart below.
+The first insight an asset manager wants to have is knowing the current condition of the assets. Such information also provides a basis for the predicting the evolution of the condition states over time. By having an interactive document, asset managers can easily get the latest overview of the condition of their assets. For example, the latest overall condition of the bridges in the mentioned line can be observed per each bridge category using the dynamic bar chart below. This is done by developing an interactive figure using `plotly` package in `shiny`. This enables developing such graphs in a shiny environment.
 
 ```{r select-input, echo=FALSE}
 
@@ -169,7 +170,8 @@ if (input$bridge_type == "ALL") {
 }
 } )
 ```
-The evolution of the condition states overtime are predicted using Markov chain modelling. 
+
+The evolution of the condition states overtime are predicted using Markov chain modelling.
 
 ```{r eval=FALSE, include=FALSE}
 selectInput(
@@ -203,7 +205,7 @@ selectInput(
 
 ```
 
-The evolution of the condition states overtime can be easily seen by moving the slide.
+The evolution of the condition states overtime can be easily seen by moving the slide. Such visualization is made by developing an shiny app.
 
 ```{r echo=FALSE}
 shinyAppDir(
@@ -252,4 +254,3 @@ shinyAppDir(
 ```
 
 =======
-
