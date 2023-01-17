@@ -65,7 +65,7 @@ You can alternatively use the following link to interact with the document even 
 
 http://shiny-group-project.loca.lt/
 
-*This section is still under development the link will be updated once it is ready*
+*This section is still under development and the link might not be stable*
 
 # Credits
 This document is prepared with the collaboration of a group of four. The contribution of each memeber are listed as the following:
