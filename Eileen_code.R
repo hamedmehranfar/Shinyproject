@@ -50,3 +50,18 @@ m <- leaflet() %>%
 # this can now be copied into the markdown file ,
 
 m
+
+write.csv(bridges.noNA, "bridges.file.csv") #out of this, we manually created a csv "bridges_conditions.csv" (details condition of abutments and bearings for bridges over the years)
+bridges_conditions <- read.csv("bridges_conditions.csv", sep = ";")
+
+# for the year 15, there seems to be no data for the majority of the bridges --> we only include years 1-14
+bridges_conditions <- bridges_conditions[,1:22]
+View(bridges_conditions)
+
+# we now try to include the popups of the bridge conditions for a given year, starting with year 1
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions$bridge_part, bridges_conditions$condition, bridges_conditions$year_1))
+m
+
+
