@@ -11,6 +11,7 @@
 library(readxl)
 library(dplyr)
 library(data.table)
+library(ggplot2)
 
 ### Data_Input ### 
 
@@ -163,17 +164,25 @@ bridge_status$year13_sum <- sum(bridge_status$constr_year13)
 bridge_status$year14_sum <- sum(bridge_status$constr_year14)
 
 
+#######################
+### save data frame ###
+#######################
+
+save(bridge_status,file="C:/Users/schmitt_j/Desktop/Shinyproject/Shinyproject/bridge_status.Rda")
+
+
 ### plot annual construction ###
 
-bridge_status_plot <- bridge_status[1,c(1,32:45)]
+bridge_status_sum_plot <- bridge_status[1,c(1,32:45)]
 
 
-bridge_status_plot_long <- melt(setDT(bridge_status_plot), id.vars = c("MixName"))
+bridge_status_plot_long <- melt(setDT(bridge_status_sum_plot), id.vars = c("MixName"))
 
 
 bridge_status_plot_long$year <- c(1,2,3,4,5,6,7,8,9,10,11,12,13,14)
 
-plot(bridge_status_plot_long$year, bridge_status_plot_long$value)
+
+construction_time <- ggplot(bridge_status_plot_long, aes(x=year, y=value)) + geom_point()
 
 
 
