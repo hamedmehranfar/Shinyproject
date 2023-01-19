@@ -195,7 +195,7 @@ CO2 emissions refer to the release of carbon dioxide into the atmosphere, primar
 
 Following is the World Map to show various countries and their emissions in the year 2016.
 
-```{r}
+```{r echo=FALSE}
 data <- read.csv(paste(location,"Data/emissions.csv", sep = "/"))
 #Filling any left coordinates
 data <- data[complete.cases(data),]
@@ -220,7 +220,7 @@ The Intergovernmental Panel on Climate Change (IPCC) estimates that we will need
 It's important to note that this is a challenging goal, and it will require significant international cooperation and investment in new technologies. Furthermore, this removal rate is not well defined since it's based on different scenarios and the real-world implementation of these projections depends on the political will and the availability of the technology to implement it.
 
 Additionally, it's important to note that removing CO2 from the atmosphere is still an emerging field and there is still a lot of research being done on how to most effectively and efficiently remove CO2.
-```{r}
+```{r echo=FALSE}
 # @hitesh: I moved this shiny app into the app folder to keep the document more tidy! (Location/apps/emission)
 shinyAppDir(
   paste(location, "apps","emission", sep= "/"),
