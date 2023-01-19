@@ -7,14 +7,10 @@ runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
-
-
 library(here)
-
 # Locating the file and setting up the work directory
 location <- here()
 setwd(location)
-
 # Loading the required packages and data 
 source(paste(location,"Preload.R", sep = "/"))
 source(paste(location,"data_prepration.R", sep = "/"))
@@ -30,7 +26,6 @@ This document considers an illustrative example railway network located in the c
 
 ```{r echo=FALSE}
 #```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
-
 # map_data_ch <- map_data('world')[map_data('world')$region == "Switzerland",]
 # swiss_map <- ggplot() +
   ## First layer: worldwide map
@@ -50,20 +45,15 @@ This document considers an illustrative example railway network located in the c
 #  theme(axis.title = element_blank())+
 #  theme(axis.ticks = element_blank())+
 #  theme(axis.text = element_blank())
-
 #swiss_map
 ```
 
 ```{r echo=FALSE}
-
-
 ChMap <- read_json("https://code.highcharts.com/mapdata/countries/ch/ch-all.geo.json")
-
 df <- data.frame(
   region = c("Bern"), 
   value = c(1)
 )
-
 df |> 
   e_charts(region) |>
   e_map_register("CH",ChMap) |> 
@@ -71,53 +61,41 @@ df |>
   e_visual_map(value, inRange = list(color = viridis(2))) |>
   e_dims(height="auto", width = "auto")
   #e_theme("infographic")
-
 rm (ChMap)
-
 ```
 
 In the next step, the location of the selected bridge portfolio in this canton is visualized in an interactive map. For this, we first read in the data pertaining to the bridges themselves, and then the data linking these bridges with their longitude and latitude.
 
 ```{r echo=FALSE}
-
 bridges_coordinates <- read_excel(paste(location,"Data/bridges_coordinates.xlsx", sep = "/"))
 ZolBgg <- bridge_data
-
 names <- na.omit(ZolBgg[,2]) # we create a vector with the bridge names that we can add the coordinates too 
 # we use this vector to then match the coordinates with the bridges, in order to visualize them on a map 
-
 #bridges_coordinates$Name
 names.bridges <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Chueelibach", "Du Lyssbach", "Jenskanal-Br.", "KDu Loeribach", 
                    "PDu Horbengasse", "Plle Bruegg", "PU Schuepfen", "PU Bruegg mitte 3", "PU Busswil", "PU Lyss", "PU mitte 1", 
                    "PU Muenchenbuchsee", "PU Oberfeldweg", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatten", 
                    "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg",
                    "SUe Steinweg", "U Bielstr.", "U Bielstrase", "U Neubrueckstrasse", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
-
 # we now rename the brige coordinates that we have
 # we will then use this to match the coordinates with the bridge names (for which we have deteoriation data)
-
 bridges_coordinates$Name <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Lyssbach", "Du Chueelibach", "Jenskanal-Br.", "KDu Loeribach", 
                               "PDu Horbengasse", "Plle Bruegg", "PU Bruegg mitte 3", "no data", "no data", "no data", "no data", "no data", 
                               "PU Busswil", "PU Lyss", "PU mitte 1", "no data", "no data", "no data", "no data", "no data", "PU Muenchenbuchsee", 
                               "PU Oberfeldweg", "no data", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatte", 
                               "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg", 
                               "SUe Steinweg", "U Bielstr.", "U Bielstrasse", "U Neubrueckstrasse", "no data", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
-
 names.bridges <- as.data.frame(names.bridges)
 names.bridges$Name <- names.bridges$names.bridges
-
 bridges <- merge(names.bridges, bridges_coordinates, by = "Name", all.y = TRUE)
 #View(bridges) 
 bridges <- subset(bridges, bridges$Name != "no data") # we now have a dataset containing only the observations for which we have data available regarding their deterioration
 bridges.noNA <- na.omit(bridges)
-
 #ensuring lat and long are numbers
 bridges.noNA$longitude <- as.numeric(bridges.noNA$longitude)
 bridges.noNA$latitude <- as.numeric(bridges.noNA$latitude)
-
 #creating new spatial point dataframe
 bridges.SP <- SpatialPointsDataFrame(bridges.noNA[,c(3,4)], bridges.noNA[,-c(3,4)])
-
 bridge_map <- leaflet() %>% 
   addTiles() %>% 
   addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name))
@@ -139,7 +117,6 @@ In Switzerland asset managers use a scale of 1-5 to keep track of the condition 
 The first insight an asset manager wants to have is knowing the current condition of the assets. Such information also provides a basis for the predicting the evolution of the condition states over time. By having an interactive document, asset managers can easily get the latest overview of the condition of their assets. For example, the latest overall condition of the bridges in the mentioned line can be observed per each bridge category using the dynamic bar chart below. This is done by developing an interactive figure using `plotly` package in `shiny`. This enables developing such graphs in a shiny environment.
 
 ```{r select-input, echo=FALSE}
-
 # Getting the input
    selectInput(
   inputId = 'bridge_type',
@@ -150,11 +127,9 @@ The first insight an asset manager wants to have is knowing the current conditio
                  'Composite',
                  'Steel')
 )
-
 # Producing the right graph according to the input!
 renderPlotly( {
 bridge_typ <- input$bridge_type
-
 if (input$bridge_type == "ALL") {
   
   bar_data_2 <- components %>% count(Type, CS) %>% group_by(Type) %>% mutate(probability = (n/sum(n)*100))
@@ -200,9 +175,7 @@ selectInput(
     fig_2 <- fig_2 %>% layout(title = 'Evolution of condition states over time', 
                               xaxis = list(title = 'Year'), yaxis = list(title = 'Percentage') 
          )
-
   })
-
 ```
 
 The evolution of the condition states overtime can be easily seen by moving the slide. Such visualization is made by developing an shiny app.
@@ -218,31 +191,36 @@ shinyAppDir(
 
 ## Chapter 2: Worldwide CO2 Emissions
 
-World Map to show various countries and their emissions in the year 2016.
+CO2 emissions refer to the release of carbon dioxide into the atmosphere, primarily from the burning of fossil fuels such as coal, oil, and natural gas. These emissions contribute to global warming and climate change, leading to rising temperatures and severe weather events.
+
+Following is the World Map to show various countries and their emissions in the year 2016.
 
 ```{r}
-
 data <- read.csv(paste(location,"Data/emissions.csv", sep = "/"))
-
 #Filling any left coordinates
 data <- data[complete.cases(data),]
-
 #ensuring lat and long are numbers
 data$longitude <- as.numeric(data$longitude)
 data$latitude <- as.numeric(data$latitude)
-
 #creating new spatial point dataframe
 data.SP <- SpatialPointsDataFrame(data[,c(7,8)], data[,-c(7,8)])
   
 m <- leaflet() %>% 
   addTiles() %>% 
   addMarkers(data = data, lng= ~longitude, lat= ~latitude, popup= paste(data$Country, "<br>", data$Emissions), clusterOptions = TRUE )
-
 m
 ```
+The need to achieve net zero emissions by 2050 is crucial in order to prevent further damage to the planet and mitigate the effects of climate change. Achieving net zero emissions means reducing the amount of CO2 released into the atmosphere to the point where it is balanced out by the amount of CO2 that is removed, such as through reforestation and carbon capture technology. This will not only help to slow down the warming of the planet but also prevent the worst impacts of climate change such as droughts, sea-level rise and extreme weather events.
 
+
+The rate at which CO2 must be removed from the atmosphere in order to reach net-neutrality by 2050 will depend on a number of factors, such as the rate at which global emissions are reduced, the effectiveness of carbon removal technologies, and the ability to scale up their deployment.
+
+The Intergovernmental Panel on Climate Change (IPCC) estimates that we will need to remove between 100 and 1000 GtCO2 from the atmosphere by 2050 in order to have a likely chance of keeping global warming below 1.5 degrees Celsius. This means that we would need to remove between 2 and 20 GtCO2 per year.
+
+It's important to note that this is a challenging goal, and it will require significant international cooperation and investment in new technologies. Furthermore, this removal rate is not well defined since it's based on different scenarios and the real-world implementation of these projections depends on the political will and the availability of the technology to implement it.
+
+Additionally, it's important to note that removing CO2 from the atmosphere is still an emerging field and there is still a lot of research being done on how to most effectively and efficiently remove CO2.
 ```{r}
-
 # @hitesh: I moved this shiny app into the app folder to keep the document more tidy! (Location/apps/emission)
 shinyAppDir(
   paste(location, "apps","emission", sep= "/"),
@@ -250,7 +228,6 @@ shinyAppDir(
     width = "100%", height = 550
   )
 )
-
 ```
 
 =======
