@@ -234,6 +234,8 @@ shinyAppDir(
 # Chaper 3: 
 Jonas part
 
+Explanations: 
+
 ```{r echo=FALSE}
 
 
@@ -294,7 +296,7 @@ bridge_data_1 <- merge(bridge_data_1, obs_per_bridge)
 
 
 ### Calculation of annual status of each bridge ###
-
+years_vector <- c((year(today())):(year(today())+n_years-1))
 bridge_status <- bridge_data_1 %>% 
   group_by(MixName) %>% 
   summarise(across(year1:year15, sum))
@@ -463,12 +465,18 @@ hours_long <- gather(bridge_construction_hours, year, Working_Hours, y1:y14, fac
 
 
 hours_plot <- ggplot(data=hours_long, aes(x=year, y=Working_Hours, group=MixName)) +
-  geom_line()
+  geom_line() + scale_x_discrete(labels=years_vector)
 
 
 ggplotly(hours_plot)
 
+```
 
+Explanations: 
+
+
+
+```{r echo=FALSE}
 # plot 2: concrete use 
 
 bridge_construction_concrete <- bridge_status[,c(1,18:31)]
@@ -490,12 +498,20 @@ concrete_long <- gather(bridge_construction_concrete, year, Concrete_Use, y1:y14
 
 
 concrete_plot <- ggplot(data=concrete_long, aes(x=year, y=Concrete_Use, group=MixName)) +
-  geom_line()
+  geom_line() + scale_x_discrete(labels=years_vector)
 
 
 ggplotly(concrete_plot)
 
+```
 
+Explanations:
+
+
+
+
+
+```{r echo=FALSE}
 # plot 3: CO2 
 
 bridge_construction_co2 <- bridge_status[,c(1,18:31)]
@@ -517,9 +533,8 @@ co2_long <- gather(bridge_construction_co2, year, Concrete_Use, y1:y14, factor_k
 
 
 co2_plot <- ggplot(data=co2_long, aes(x=year, y=Concrete_Use, group=MixName)) +
-  geom_line()
+  geom_line() + scale_x_discrete(labels=years_vector)
 
 ggplotly(co2_plot)
 
 ```
-
