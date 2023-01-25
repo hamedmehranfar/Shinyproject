@@ -1,18 +1,21 @@
+library(shiny)
+library(ggplot2)
+
 ui <- fluidPage(
   
   # Application title
   titlePanel("CO2 Emissions Projection by 2050"),
   
-  # Sidebar with a slider input for number of bins 
+  # Sidebar with a slider input for number of bins
   sidebarLayout(
     sidebarPanel(
       sliderInput("R",
-                  "Kgs per month",
+                  "No. of trees per month",
                   min = 0,
-                  max = 10,
+                  max = 150,
                   value = 1),
       sliderInput("f",
-                  "yo",
+                  "Amount of food waste avoided",
                   min = 0,
                   max = 10,
                   value = 1)
@@ -30,15 +33,22 @@ server <- function(input, output) {
   
   output$distPlot <- renderPlot({
     # generate bins based on input$bins from ui.R
-    s    <- 1:100
-    V = input$R*exp(-1*input$f*s)
+    removal <- read.csv(paste(getwd(),"Data/removal.csv", sep = "/"))
+    xValue <- removal$Year
+    yValue <- removal$IndividualYear
+    cdioxide <- removal$Emissions
+    s<- 1:28
+    X<- 1:400
+    population <- 0.007880000000
+    V = cdioxide/(population*input$R*25*12*s*input$f*2.5*12*s)
     
     # draw the plot with the specified number of bins
-    plot(s,V, col = 'darkgray',
-         xlab = 'Waiting time to next eruption (in mins)',
-         main = 'Plot of waiting times', bty="n",type="l")
+    plot(xValue,V, col = 'darkgray',
+         xlab = 'Year',
+         main = 'Plot to see the net-Zero', bty="n",type="l")
+    lines(xValue,cdioxide)
   })
 }
 
-# Run the application 
+# Run the application
 shinyApp(ui = ui, server = server)
