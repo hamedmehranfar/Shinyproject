@@ -236,10 +236,17 @@ ggplot(data, aes(x=xValue, y=yValue)) +
 
 This tool helps you to realize the amount of CO2 reduction one needs to do to achieve net neutrality. This markdown assumes that all the industrial emissions are for goods which is to be ultimately used by/for the people, and averages the industrial emissions onto the whole world population.
 
-With below tool you can see how much a household needs to remove per year, and collectively by the year 2050.
+With below tool you can see how much plants and food wastage avoidance every single person needs to do in order to achieve net-neutrality by the year 2050.
 
 There are a lot of factors that affect the emissions of CO2. This document is rudimentary in terms of predicting emission free technology's evolution. Hence, assuming that by 2050 technology doesn't improve and we continue to emit the same amount of CO2.
 
+With sliders below
+1.) Select how much trees each individual on earth needs to plant
+2.) Select how much food wastage each individual on earth needs to avoid
+
+The selected parameters are then extrapolated to 7.88 billion people of Earth with following data-
+1.) Each tree absorbs 25kg of CO2 every year.
+2.) Each kg of food wasted emits 2.5 kg of Green House Gases or 2.5 kg of CO2e (CO2 equivalent)
 ```{r echo=FALSE}
 shinyAppDir(
   paste(location, "apps","emission", sep= "/"),
