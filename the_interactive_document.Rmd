@@ -4,6 +4,7 @@ author: "Shinygroup"
 date: '2022'
 output: html_document
 runtime: shiny
+
 ---
 
 ```{r setup, include=FALSE}
@@ -14,6 +15,7 @@ setwd(location)
 # Loading the required packages and data 
 source(paste(location,"Preload.R", sep = "/"))
 source(paste(location,"data_prepration.R", sep = "/"))
+
 ```
 
 The goal of this R Markdown document is to explore the use of Shiny for making interactive documents. Two topics are discussed in this document. The first chapter is dedicated to visualize how railway bridge components deteriorate overtime. This will provide asset managers with an overview of the how their assets behave overtime and what maintenance actives are needed. The second chapter visualizes the emission of CO2. The markdown will provide a countrywise emissions data and then provide a projected amount to be removed from the atmosphere by the year 2050. Also, it can show the user the percentage contribution of their carbon removal efforts in the total carbon dioxide curbs required by the year 2050.
@@ -246,3 +248,313 @@ shinyAppDir(
   )
 )
 ```
+<<<<<<< HEAD
+=======
+# Chaper 3: 
+Jonas part
+
+Explanations: 
+
+```{r echo=FALSE}
+
+
+####################################################################
+### Calculation of working hours, concrete use and CO2 emissions ###
+####################################################################
+
+# Second Step: Illustration of the annual input demand through gg-plot
+
+# Through our application, we offer a easy construction planning possibility to distribute the working efforts over an observation period.
+
+### packages ###
+
+require(readxl)
+require(dplyr)
+require(data.table)
+require(ggplot2)
+require(tidyr)
+require(shiny)
+
+
+### Data_Input ### 
+
+bridge_data_1 <- bridge_data
+
+
+### rename year columns ###
+
+colnames(bridge_data_1)[6]  <- "year1"
+colnames(bridge_data_1)[7]  <- "year2"
+colnames(bridge_data_1)[8]  <- "year3"
+colnames(bridge_data_1)[9]  <- "year4"
+colnames(bridge_data_1)[10] <- "year5"
+colnames(bridge_data_1)[11] <- "year6"
+colnames(bridge_data_1)[12] <- "year7"
+colnames(bridge_data_1)[13] <- "year8"
+colnames(bridge_data_1)[14] <- "year9"
+colnames(bridge_data_1)[15] <- "year10"
+colnames(bridge_data_1)[16] <- "year11"
+colnames(bridge_data_1)[17] <- "year12"
+colnames(bridge_data_1)[18] <- "year13"
+colnames(bridge_data_1)[19] <- "year14"
+colnames(bridge_data_1)[20] <- "year15"
+
+
+### Pre-Step: Calculation of annual status --> value for different qualities each year ###
+
+
+bridge_data_1 <- bridge_data_1 %>% mutate(across(year1:year15,~ .x*CS)) 
+
+
+### number of observations per bridge ###
+
+
+obs_per_bridge <- bridge_data_1 %>% count(MixName)
+
+bridge_data_1 <- merge(bridge_data_1, obs_per_bridge)
+
+
+### Calculation of annual status of each bridge ###
+years_vector <- c((year(today())):(year(today())+n_years-1))
+bridge_status <- bridge_data_1 %>% 
+  group_by(MixName) %>% 
+  summarise(across(year1:year15, sum))
+
+bridge_status <- merge(bridge_status, obs_per_bridge)
+
+
+### Overall percentage value of bridge status ###
+
+bridge_status_new <- bridge_status[,2:16]/bridge_status[,17]  
+
+
+bridge_status <- cbind(bridge_status[,c(1,17)], bridge_status_new )
+
+
+### Diff of each year to detect construction work ###
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year1 = if_else(year2 < year1,
+                                year1 - year2,0))
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year2 = if_else(year3 < year2,
+                                year2 - year3,0))
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year3 = if_else(year4 < year3,
+                                year3 - year4,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year4 = if_else(year5 < year4,
+                                year4 - year5,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year5 = if_else(year6 < year5,
+                                year5 - year6,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year6 = if_else(year7 < year6,
+                                year6 - year7,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year7 = if_else(year8 < year7,
+                                year7 - year8,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year8 = if_else(year9 < year8,
+                                year8 - year9,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year9 = if_else(year10 < year9,
+                                year9 - year10,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year10 = if_else(year11 < year10,
+                                 year10 - year11,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year11 = if_else(year12 < year11,
+                                 year11 - year12,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year12 = if_else(year13 < year12,
+                                 year12 - year13,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year13 = if_else(year14 < year13,
+                                 year13 - year14,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year14 = if_else(year15 < year14,
+                                 year14 - year15,0))
+
+
+
+### construction sum per year ###
+
+bridge_status$year1_sum <- sum(bridge_status$constr_year1)
+bridge_status$year2_sum <- sum(bridge_status$constr_year2)
+bridge_status$year3_sum <- sum(bridge_status$constr_year3)
+bridge_status$year4_sum <- sum(bridge_status$constr_year4)
+bridge_status$year5_sum <- sum(bridge_status$constr_year5)
+bridge_status$year6_sum <- sum(bridge_status$constr_year6)
+bridge_status$year7_sum <- sum(bridge_status$constr_year7)
+bridge_status$year8_sum <- sum(bridge_status$constr_year8)
+bridge_status$year9_sum <- sum(bridge_status$constr_year9)
+bridge_status$year10_sum <- sum(bridge_status$constr_year10)
+bridge_status$year11_sum <- sum(bridge_status$constr_year11)
+bridge_status$year12_sum <- sum(bridge_status$constr_year12)
+bridge_status$year13_sum <- sum(bridge_status$constr_year13)
+bridge_status$year14_sum <- sum(bridge_status$constr_year14)
+
+
+
+# plot annual construction for all bridges in total throughout the observation period
+
+
+bridge_status_sum_plot <- bridge_status[1,c(1,32:45)]
+
+
+bridge_status_plot_long <- melt(setDT(bridge_status_sum_plot), id.vars = c("MixName"))
+
+
+bridge_status_plot_long$year <- c(1,2,3,4,5,6,7,8,9,10,11,12,13,14)
+
+
+construction_time <- ggplot(bridge_status_plot_long, aes(x=year, y=value)) + geom_point()
+
+
+##################################
+##################################
+
+# Definition of input use for construction activities:
+
+# Each "construction unit" requires the following imaginary inputs 
+
+working_hours <- 1000 # hours
+
+concrete_use <- 5000  # tonnes
+
+CO2_emissions <- 2000 # tonnes
+
+
+
+##################################
+##################################
+
+
+# Construction requirements and cots for each bridge 
+
+
+bridge_construction_hours <- bridge_status[,c(1,18:31)]
+
+
+# Calculation of input requirements of each bridge
+
+# plot 1: working hours
+
+bridge_construction_hours <- bridge_construction_hours %>% 
+  mutate_at(vars(constr_year1:constr_year14),
+            .funs = funs(. * 1000))
+
+
+bridge_construction_hours <- setnames(bridge_construction_hours, 
+                                      old = c('constr_year1','constr_year2','constr_year3','constr_year4','constr_year5','constr_year6',
+                                              'constr_year7','constr_year8','constr_year9','constr_year10','constr_year11','constr_year12',
+                                              'constr_year13','constr_year14'), 
+                                      new = c('y1','y2','y3','y4','y5','y6',
+                                              'y7','y8','y9','y10','y11','y12',
+                                              'y13','y14'))
+
+
+hours_long <- gather(bridge_construction_hours, year, Working_Hours, y1:y14, factor_key=TRUE)
+
+
+hours_plot <- ggplot(data=hours_long, aes(x=year, y=Working_Hours, group=MixName)) +
+  geom_line() + scale_x_discrete(labels=years_vector)
+
+
+ggplotly(hours_plot)
+
+```
+
+Explanations: 
+
+
+
+```{r echo=FALSE}
+# plot 2: concrete use 
+
+bridge_construction_concrete <- bridge_status[,c(1,18:31)]
+
+bridge_construction_concrete <- bridge_construction_concrete %>% 
+  mutate_at(vars(constr_year1:constr_year14),
+            .funs = funs(. * 1000))
+
+
+setnames(bridge_construction_concrete, 
+         old = c('constr_year1','constr_year2','constr_year3','constr_year4','constr_year5','constr_year6',
+                 'constr_year7','constr_year8','constr_year9','constr_year10','constr_year11','constr_year12',
+                 'constr_year13','constr_year14'), 
+         new = c('y1','y2','y3','y4','y5','y6',
+                 'y7','y8','y9','y10','y11','y12',
+                 'y13','y14'))
+
+concrete_long <- gather(bridge_construction_concrete, year, Concrete_Use, y1:y14, factor_key=TRUE)
+
+
+concrete_plot <- ggplot(data=concrete_long, aes(x=year, y=Concrete_Use, group=MixName)) +
+  geom_line() + scale_x_discrete(labels=years_vector)
+
+
+ggplotly(concrete_plot)
+
+```
+
+Explanations:
+
+
+
+
+
+```{r echo=FALSE}
+# plot 3: CO2 
+
+bridge_construction_co2 <- bridge_status[,c(1,18:31)]
+
+bridge_construction_co2 <- bridge_construction_co2 %>% 
+  mutate_at(vars(constr_year1:constr_year14),
+            .funs = funs(. * 2000))
+
+
+setnames(bridge_construction_co2, 
+         old = c('constr_year1','constr_year2','constr_year3','constr_year4','constr_year5','constr_year6',
+                 'constr_year7','constr_year8','constr_year9','constr_year10','constr_year11','constr_year12',
+                 'constr_year13','constr_year14'), 
+         new = c('y1','y2','y3','y4','y5','y6',
+                 'y7','y8','y9','y10','y11','y12',
+                 'y13','y14'))
+
+co2_long <- gather(bridge_construction_co2, year, Concrete_Use, y1:y14, factor_key=TRUE)
+
+
+co2_plot <- ggplot(data=co2_long, aes(x=year, y=Concrete_Use, group=MixName)) +
+  geom_line() + scale_x_discrete(labels=years_vector)
+
+ggplotly(co2_plot)
+
+```
+>>>>>>> d344e6c9eb8b1d42ac1e950f8d70b2bf6e5069d0

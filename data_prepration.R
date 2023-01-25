@@ -4,7 +4,8 @@
 
 # Data_Input 
 
-location <- dirname(rstudioapi::getActiveDocumentContext()$path)
+#location <- dirname(rstudioapi::getActiveDocumentContext()$path)
+location <- here()
 bridge_data <- read_excel(paste(location, "Data", "ZolBgg-xmp.xlsx", sep = "/"), sheet = "CsEvo")
 
 # Update the header with the corrected year
