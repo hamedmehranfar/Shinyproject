@@ -531,10 +531,9 @@ setnames(bridge_construction_co2,
 
 co2_long <- gather(bridge_construction_co2, year, Concrete_Use, y1:y14, factor_key=TRUE)
 
-
+library("viridis")
 co2_plot <- ggplot(data=co2_long, aes(x=year, y=Concrete_Use, group=MixName)) +
-  geom_line() + scale_x_discrete(labels=years_vector)
-
+  geom_line() + scale_x_discrete(labels=years_vector) 
 ggplotly(co2_plot)
 
 ```
