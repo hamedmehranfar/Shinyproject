@@ -223,7 +223,24 @@ It's important to note that this is a challenging goal, and it will require sign
 
 Additionally, it's important to note that removing CO2 from the atmosphere is still an emerging field and there is still a lot of research being done on how to most effectively and efficiently remove CO2.
 ```{r echo=FALSE}
-# @hitesh: I moved this shiny app into the app folder to keep the document more tidy! (Location/apps/emission)
+removal <- read.csv(paste(getwd(),"Data/removal.csv", sep = "/"))
+xValue <- removal$Year
+yValue <- removal$Emissions
+data <- data.frame(xValue,yValue)
+
+# Plot
+ggplot(data, aes(x=xValue, y=yValue)) +
+  xlab(bquote(Year))+
+  ylab(bquote(Amount~of~CO[2]~needed~to~be~removed)) +ggtitle(bquote(Rough~Projection~of~CO[2]~to~be~removed~by~2050~to~achieve~net-Zero)) + geom_line()
+```
+
+This tool helps you to realize the amount of CO2 reduction one needs to do to achieve net neutrality. This markdown assumes that all the industrial emissions are for goods which is to be ultimately used by/for the people, and averages the industrial emissions onto the whole world population.
+
+With below tool you can see how much a household needs to remove per year, and collectively by the year 2050.
+
+There are a lot of factors that affect the emissions of CO2. This document is rudimentary in terms of predicting emission free technology's evolution. Hence, assuming that by 2050 technology doesn't improve and we continue to emit the same amount of CO2.
+
+```{r echo=FALSE}
 shinyAppDir(
   paste(location, "apps","emission", sep= "/"),
   options = list(
@@ -231,6 +248,8 @@ shinyAppDir(
   )
 )
 ```
+<<<<<<< HEAD
+=======
 # Chaper 3: 
 Jonas part
 
@@ -537,3 +556,4 @@ co2_plot <- ggplot(data=co2_long, aes(x=year, y=Concrete_Use, group=MixName)) +
 ggplotly(co2_plot)
 
 ```
+>>>>>>> d344e6c9eb8b1d42ac1e950f8d70b2bf6e5069d0
