@@ -90,7 +90,7 @@ hours_long <- gather(bridge_construction_hours, year, Working_Hours, y1:y14, fac
 
 
 hours_plot <- ggplot(data=hours_long, aes(x=year, y=Working_Hours, group=MixName)) +
-  geom_line()
+  geom_line() + ggtitle("Annual construction working hours by bridge")  + theme(plot.title = element_text(hjust = 0.5))
 
 
 
@@ -116,7 +116,7 @@ concrete_long <- gather(bridge_construction_concrete, year, Concrete_Use, y1:y14
 
 
 concrete_plot <- ggplot(data=concrete_long, aes(x=year, y=Concrete_Use, group=MixName)) +
-  geom_line()
+  geom_line() + ggtitle("Annual concrete use by bridge")  + theme(plot.title = element_text(hjust = 0.5))
 
 
 
@@ -143,7 +143,7 @@ co2_long <- gather(bridge_construction_co2, year, Concrete_Use, y1:y14, factor_k
 
 
 co2_plot <- ggplot(data=co2_long, aes(x=year, y=Concrete_Use, group=MixName)) +
-  geom_line()
+  geom_line() + ggtitle("Annual CO2 emissions during construction by bridge")  + theme(plot.title = element_text(hjust = 0.5))
 
 
 
