@@ -556,4 +556,3 @@ co2_plot <- ggplot(data=co2_long, aes(x=year, y=Concrete_Use, group=MixName)) +
 ggplotly(co2_plot)
 
 ```
->>>>>>> d344e6c9eb8b1d42ac1e950f8d70b2bf6e5069d0
