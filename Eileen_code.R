@@ -5,8 +5,8 @@ library(sp)
 library(dplyr)
 library(leaflet)
 
-bridges_coordinates <- read_excel(paste(location,"Data/bridges_coordinates.xlsx", sep = "/"))
-ZolBgg <- read_excel(paste(location,"Data/ZolBgg-xmp.xlsx", sep = "/"))
+bridges_coordinates <- read_xlsx("bridges_coordinates.xlsx")
+ZolBgg <- read_xlsx("ZolBgg-xmp.xlsx")
 
 names <- na.omit(ZolBgg[,2]) # we create a vector with the bridge names that we can add the coordinates too 
 # we use this vector to then match the coordinates with the bridges, in order to visualize them on a map 
@@ -49,5 +49,55 @@ bridge_map <- leaflet() %>%
 
 # this can now be copied into the markdown file ,
 
+write.csv(bridges.noNA, "bridges.file.csv") #out of this, I manually created a csv "bridges_conditions.csv" (details condition of abutments and bearings for bridges over the years)
+bridges_conditions <- read.csv("bridges_conditions.csv", sep = ";")
+
+# for the year 15, there seems to be no data for the majority of the bridges --> we only include years 1-14
+bridges_conditions <- bridges_conditions[,1:22]
+View(bridges_conditions)
+
+# we now try to include the popups of the bridge conditions for a given year, starting with year 1
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions$bridge_part, bridges_conditions$condition, bridges_conditions$year_1))
 m
 
+# this does not give us the desired result, so we add the possibility to plot the map for a specific bridge part and year
+# we first create a table containing either the abutment or the bearings 
+bridges_conditions.bearings <- subset(bridges_conditions, bridges_conditions$bridge_part == "bearings")
+bridges_conditions.abutment <- subset(bridges_conditions, bridges_conditions$bridge_part == "abutment")
+
+# first for the bearings
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.bearings$bridge_part, bridges_conditions.bearings$condition, bridges_conditions.abutment$year_1))
+m
+
+# now for the abutments
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.abutment$bridge_part, bridges_conditions.abutment$condition, bridges_conditions.abutment$year_1))
+m
+
+# it doesn't allow us to display all the condition states in the respective years. 
+# we will instead plot the possibility for a condition 1 occurring, as it would indicate some degree of deterioation 
+# this could then be used to gain information for potential repair work in the future
+# as an example, doing it only for the abutments
+
+bridges_conditions.abutment.1 <- subset(bridges_conditions.abutment, bridges_conditions.abutment$condition == 1)
+
+# for year 1 
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.abutment.1$bridge_part, bridges_conditions.abutment.1$year_1))
+m
+
+
+# if we now want to see how this part would develop in 5 years, we can also plot this
+# for year 6 
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.abutment.1$bridge_part, bridges_conditions.abutment.1$year_6))
+m
+
+# this code for the map can be copied for the respective years we want to see the state of the abutments in 
