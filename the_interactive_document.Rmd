@@ -255,13 +255,16 @@ shinyAppDir(
   )
 )
 ```
-<<<<<<< HEAD
-=======
+
 # Chaper 3: 
-Jonas part
+In this chapter the calculation of working hours, concrete use and CO2 emissions was done.
 
-Explanations: 
+In the first step, we prepare the dataset for the estimation of input use demand and a more effective construction planing.
+Then, we calculate the annual 'status' of each bridge in each year.
+Finally, we create a shiny app for bridge constructors to enable them to distribute the working efforts over the whole observation period.
 
+Through our work, we offer a tool for construction managers that they can distribute the input demand during a certain time-frame. 
+Right now, all construction is accumulated in the years 10 and 11, which is quite unrealistic. First, construction companies probably do not have the work force to construction more than 100 bridges in the same year. Second, it would be really problematic for the people who actually need to use the highway to go to work etc, because the highway would be one big construction side. Hence, distributing the construction efforts smoothly throughout the year would have both advantages for construction companies and highway users. Further, we add an additional plot for the CO2 emissions associated with annual bridge building. This could be an interesting tool for managing CO2 emissions in Swiss (traffic) construction. 
 ```{r echo=FALSE}
 
 
@@ -519,123 +522,6 @@ ggplotly(hours_plot)
 
 ```
 
-<<<<<<< HEAD
-Eileen's part - plotting the bridges in a map and adding condition states over the given years (to see the progression)
-
-```{r}
-library(readxl)
-library(sp)
-library(dplyr)
-library(leaflet)
-
-bridges_coordinates <- read_xlsx("bridges_coordinates.xlsx")
-ZolBgg <- read_xlsx("ZolBgg-xmp.xlsx")
-
-names <- na.omit(ZolBgg[,2])
-```
-
-we create a vector with the bridge names that we can add the coordinates too 
-we use this vector to then match the coordinates with the bridges, in order to visualize them on a map 
-
-```{r}
-bridges_coordinates$Name
-names.bridges <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Chueelibach", "Du Lyssbach", "Jenskanal-Br.", "KDu Loeribach",
-                   "PDu Horbengasse", "Plle Bruegg", "PU Schuepfen", "PU Bruegg mitte 3", "PU Busswil", "PU Lyss", "PU mitte 1", 
-                   "PU Muenchenbuchsee", "PU Oberfeldweg", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatten", 
-                   "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg",
-                   "SUe Steinweg", "U Bielstr.", "U Bielstrase", "U Neubrueckstrasse", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
-
-```
-
-we now rename the brige coordinates that we have
-we will then use this to match the coordinates with the bridge names (for which we have deteoriation data)
-
-```{r}
-bridges_coordinates$Name <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Lyssbach", "Du Chueelibach", "Jenskanal-Br.", "KDu Loeribach", 
-                              "PDu Horbengasse", "Plle Bruegg", "PU Bruegg mitte 3", "no data", "no data", "no data", "no data", "no data", 
-                              "PU Busswil", "PU Lyss", "PU mitte 1", "no data", "no data", "no data", "no data", "no data", "PU Muenchenbuchsee", 
-                              "PU Oberfeldweg", "no data", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatte", 
-                              "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg", 
-                              "SUe Steinweg", "U Bielstr.", "U Bielstrasse", "U Neubrueckstrasse", "no data", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
-
-names.bridges <- as.data.frame(names.bridges)
-names.bridges$Name <- names.bridges$names.bridges
-
-bridges <- merge(names.bridges, bridges_coordinates, by = "Name", all.y = TRUE)
-bridges <- subset(bridges, bridges$Name != "no data") 
-bridges.noNA <- na.omit(bridges)
-
-bridges.noNA$longitude <- as.numeric(bridges.noNA$longitude)
-bridges.noNA$latitude <- as.numeric(bridges.noNA$latitude)
-
-bridges.SP <- SpatialPointsDataFrame(bridges.noNA[,c(3,4)], bridges.noNA[,-c(3,4)])
-
-bridge_map <- leaflet() %>% 
-  addTiles() %>% 
-  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name))
-bridge_map
-```
-
-We achieved a map of the bridges using their coordinates, and we now want to add the conditions to it. For this, I manually created a more readable csv file out of the original file displaying the bridge conditions. I did this only for two bidge parts, but the following code should also work for other parts. 
-
-```{r}
-write.csv(bridges.noNA, "bridges.file.csv") 
-bridges_conditions <- read.csv("bridges_conditions.csv", sep = ";")
-
-bridges_conditions <- bridges_conditions[,1:22]
-View(bridges_conditions)
-
-m <- leaflet() %>% 
-  addTiles() %>% 
-  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions$bridge_part, bridges_conditions$condition, bridges_conditions$year_1))
-m
-```
-this does not give us the desired result, so we add the possibility to plot the map for a specific bridge part and year
-we first create a table containing either the abutment or the bearings
-
-```{r}
-bridges_conditions.bearings <- subset(bridges_conditions, bridges_conditions$bridge_part == "bearings")
-bridges_conditions.abutment <- subset(bridges_conditions, bridges_conditions$bridge_part == "abutment")
-
-# first for the bearings
-m <- leaflet() %>% 
-  addTiles() %>% 
-  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.bearings$bridge_part, bridges_conditions.bearings$condition, bridges_conditions.abutment$year_1))
-m
-
-# now for the abutments
-m <- leaflet() %>% 
-  addTiles() %>% 
-  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.abutment$bridge_part, bridges_conditions.abutment$condition, bridges_conditions.abutment$year_1))
-m
-```
-
-it doesn't allow us to display all the condition states in the respective years. 
-we will instead plot the possibility for a condition 1 occurring, as it would indicate some degree of deterioation 
-this could then be used to gain information for potential repair work in the future
-as an example, doing it only for the abutments
-
-```{r}
-bridges_conditions.abutment.1 <- subset(bridges_conditions.abutment, bridges_conditions.abutment$condition == 1)
-
-# for year 1 
-m <- leaflet() %>% 
-  addTiles() %>% 
-  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.abutment.1$bridge_part, bridges_conditions.abutment.1$year_1))
-m
-
-
-# if we now want to see how this part would develop in 5 years, we can also plot this
-# for year 6 
-m <- leaflet() %>% 
-  addTiles() %>% 
-  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.abutment.1$bridge_part, bridges_conditions.abutment.1$year_6))
-m
-```
-
-this code for the map can be copied for the respective years we want to see the state of the abutments in 
-=======
-=======
 
 ```{r echo=FALSE}
 # plot 2: concrete use 
@@ -691,12 +577,6 @@ co2_long <- gather(bridge_construction_co2, year, Concrete_Use, y1:y14, factor_k
 
 library("viridis")
 co2_plot <- ggplot(data=co2_long, aes(x=year, y=Concrete_Use, group=MixName)) +
-<<<<<<< HEAD
-  geom_line() + scale_x_discrete(labels=years_vector) 
-ggplotly(co2_plot)
-
-```
-=======
   geom_line() + scale_x_discrete(labels=years_vector) + 
   ggtitle("Annual CO2 emissions during construction by bridge")  + 
   theme(plot.title = element_text(hjust = 0.5))
@@ -704,6 +584,123 @@ ggplotly(co2_plot)
 ggplotly(co2_plot)
 
 ```
->>>>>>> d344e6c9eb8b1d42ac1e950f8d70b2bf6e5069d0
->>>>>>> deb34994f75773523515bdf12dea0dbc9f7497d8
->>>>>>> 18430b4fe525c9d1438f00d0523994da5203ffb3
+
+# Appendix
+Another idea that was suggested by Eileen was to visualize the condition of the bridges over time on the map of the bride network. Here you can find her attemt to do so:
+
+Plotting the bridges in a map and adding condition states over the given years (to see the progression)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(readxl)
+library(sp)
+library(dplyr)
+library(leaflet)
+
+bridges_coordinates <- read_excel(paste(location,"Data/bridges_coordinates.xlsx", sep = "/"))
+ZolBgg <- read_excel(paste(location,"Data/ZolBgg-xmp.xlsx", sep = "/"))
+#bridges_coordinates <- read_xlsx("bridges_coordinates.xlsx")
+#ZolBgg <- read_xlsx("ZolBgg-xmp.xlsx")
+
+#names <- na.omit(ZolBgg[,2])
+```
+
+we create a vector with the bridge names that we can add the coordinates too 
+we use this vector to then match the coordinates with the bridges, in order to visualize them on a map 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#bridges_coordinates$Name
+names.bridges <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Chueelibach", "Du Lyssbach", "Jenskanal-Br.", "KDu Loeribach",
+                   "PDu Horbengasse", "Plle Bruegg", "PU Schuepfen", "PU Bruegg mitte 3", "PU Busswil", "PU Lyss", "PU mitte 1", 
+                   "PU Muenchenbuchsee", "PU Oberfeldweg", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatten", 
+                   "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg",
+                   "SUe Steinweg", "U Bielstr.", "U Bielstrase", "U Neubrueckstrasse", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
+
+```
+
+we now rename the brige coordinates that we have
+we will then use this to match the coordinates with the bridge names (for which we have deteoriation data)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+bridges_coordinates$Name <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Lyssbach", "Du Chueelibach", "Jenskanal-Br.", "KDu Loeribach", 
+                              "PDu Horbengasse", "Plle Bruegg", "PU Bruegg mitte 3", "no data", "no data", "no data", "no data", "no data", 
+                              "PU Busswil", "PU Lyss", "PU mitte 1", "no data", "no data", "no data", "no data", "no data", "PU Muenchenbuchsee", 
+                              "PU Oberfeldweg", "no data", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatte", 
+                              "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg", 
+                              "SUe Steinweg", "U Bielstr.", "U Bielstrasse", "U Neubrueckstrasse", "no data", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
+
+names.bridges <- as.data.frame(names.bridges)
+names.bridges$Name <- names.bridges$names.bridges
+
+bridges <- merge(names.bridges, bridges_coordinates, by = "Name", all.y = TRUE)
+bridges <- subset(bridges, bridges$Name != "no data") 
+bridges.noNA <- na.omit(bridges)
+
+bridges.noNA$longitude <- as.numeric(bridges.noNA$longitude)
+bridges.noNA$latitude <- as.numeric(bridges.noNA$latitude)
+
+bridges.SP <- SpatialPointsDataFrame(bridges.noNA[,c(3,4)], bridges.noNA[,-c(3,4)])
+
+bridge_map <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name))
+bridge_map
+```
+
+We achieved a map of the bridges using their coordinates, and we now want to add the conditions to it. For this, I manually created a more readable csv file out of the original file displaying the bridge conditions. I did this only for two bidge parts, but the following code should also work for other parts. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+write.csv(bridges.noNA, "bridges.file.csv") 
+bridges_conditions <- read.csv("bridges_conditions.csv", sep = ";")
+
+bridges_conditions <- bridges_conditions[,1:22]
+#View(bridges_conditions)
+
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions$bridge_part, bridges_conditions$condition, bridges_conditions$year_1))
+m
+```
+this does not give us the desired result, so we add the possibility to plot the map for a specific bridge part and year
+we first create a table containing either the abutment or the bearings
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+bridges_conditions.bearings <- subset(bridges_conditions, bridges_conditions$bridge_part == "bearings")
+bridges_conditions.abutment <- subset(bridges_conditions, bridges_conditions$bridge_part == "abutment")
+
+# first for the bearings
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.bearings$bridge_part, bridges_conditions.bearings$condition, bridges_conditions.abutment$year_1))
+m
+
+# now for the abutments
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.abutment$bridge_part, bridges_conditions.abutment$condition, bridges_conditions.abutment$year_1))
+m
+```
+
+it doesn't allow us to display all the condition states in the respective years. 
+we will instead plot the possibility for a condition 1 occurring, as it would indicate some degree of deterioation 
+this could then be used to gain information for potential repair work in the future
+as an example, doing it only for the abutments
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+bridges_conditions.abutment.1 <- subset(bridges_conditions.abutment, bridges_conditions.abutment$condition == 1)
+
+# for year 1 
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.abutment.1$bridge_part, bridges_conditions.abutment.1$year_1))
+m
+
+
+# if we now want to see how this part would develop in 5 years, we can also plot this
+# for year 6 
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.abutment.1$bridge_part, bridges_conditions.abutment.1$year_6))
+m
+```
+
+this code for the map can be copied for the respective years we want to see the state of the abutments in 
