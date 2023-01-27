@@ -9,10 +9,10 @@ runtime: shiny
 ```{r setup, include=FALSE}
 
 
-library("rstudioapi")
+library(here)
 
 # Locating the file and setting up the work directory
-location <- dirname(rstudioapi::getActiveDocumentContext()$path)
+location <- here()
 setwd(location)
 
 # Loading the required packages and data 
@@ -27,49 +27,6 @@ Multiple packages are used to maximize the interactivity of this document and br
 ## Chapter 1: Visualising the deterioration of railway bridges
 
 This document considers an illustrative example railway network located in the canton of Bern, Switzerland. Different visualizations are created to assist infrastructure mangers in their intervention planning process. The figure below shows the approximate location of the canton of Bern.
-
-In a first step, we will try to visualize the locations of the bridges in Switzerland. For this, we first read in the data pertaining to the bridges themselves, and then the data linking these bridges with their longitude and latitude. 
-
-```{undefined eval=FALSE, include=FALSE}
-
-bridges_coordinates <- read_excel(paste(location,"Data/bridges_coordinates.xlsx", sep = "/"))
-ZolBgg <- read_excel(paste(location,"Data/ZolBgg-xmp.xlsx", sep = "/"))
-
-names <- na.omit(ZolBgg[,2]) # we create a vector with the bridge names that we can add the coordinates too 
-# we use this vector to then match the coordinates with the bridges, in order to visualize them on a map 
-
-bridges_coordinates$Name
-names.bridges <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Chueelibach", "Du Lyssbach", "Jenskanal-Br.", "KDu Loeribach", 
-                   "PDu Horbengasse", "Plle Bruegg", "PU Schuepfen", "PU Bruegg mitte 3", "PU Busswil", "PU Lyss", "PU mitte 1", 
-                   "PU Muenchenbuchsee", "PU Oberfeldweg", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatten", 
-                   "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg",
-                   "SUe Steinweg", "U Bielstr.", "U Bielstrase", "U Neubrueckstrasse", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
-
-# we now rename the brige coordinates that we have
-# we will then use this to match the coordinates with the bridge names (for which we have deteoriation data)
-
-bridges_coordinates$Name <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Lyssbach", "Du Chueelibach", "Jenskanal-Br.", "KDu Loeribach", 
-                              "PDu Horbengasse", "Plle Bruegg", "PU Bruegg mitte 3", "no data", "no data", "no data", "no data", "no data", 
-                              "PU Busswil", "PU Lyss", "PU mitte 1", "no data", "no data", "no data", "no data", "no data", "PU Muenchenbuchsee", 
-                              "PU Oberfeldweg", "no data", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatte", 
-                              "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg", 
-                              "SUe Steinweg", "U Bielstr.", "U Bielstrasse", "U Neubrueckstrasse", "no data", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
-
-names.bridges <- as.data.frame(names.bridges)
-names.bridges$Name <- names.bridges$names.bridges
-
-bridges <- merge(names.bridges, bridges_coordinates, by = "Name", all.y = TRUE)
-View(bridges) 
-bridges <- subset(bridges, bridges$Name != "no data") # we now have a dataset containing only the observations for which we have data available regarding their deterioration
-bridges.noNA <- na.omit(bridges)
-
-
-# plotting the data on a map of Switzerland 
-map_data_ch <- map_data('world')[map_data('world')$region == "Switzerland",]
-swiss_map <- ggplot() + geom_polygon(data = map_data_ch,
-                                                    aes(x=long, y=lat, group = group),
-                                                   color = 'red', fill="#b01040")
-```
 
 ```{r echo=FALSE}
 #```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
@@ -100,28 +57,71 @@ swiss_map <- ggplot() + geom_polygon(data = map_data_ch,
 ```{r echo=FALSE}
 
 
-json_ch <- jsonlite::read_json(
-  "https://raw.githubusercontent.com/mbannert/maps/master/ch_bfs_regions.geojson"
+ChMap <- read_json("https://code.highcharts.com/mapdata/countries/ch/ch-all.geo.json")
+
+df <- data.frame(
+  region = c("Bern"), 
+  value = c(1)
 )
 
-d <- data.frame(
-  name = c("Zürich",
-           "Ticino",
-           "Zentralschweiz",
-           "Nordwestschweiz",
-           "Espace Mittelland",
-           "Région lémanique",
-           "Ostschweiz"),
-  values = c(20,20,20,20,100,20,20)
-)
+df |> 
+  e_charts(region) |>
+  e_map_register("CH",ChMap) |> 
+  e_map(value, map = "CH") |> 
+  e_visual_map(value, inRange = list(color = viridis(2))) |>
+  e_dims(height="auto", width = "auto")
+  #e_theme("infographic")
 
-d |>
-  e_charts(name) |>
-  e_map_register("CH", json_ch) |>
-  e_map(serie = values, map = "CH") |>
-  e_visual_map(values,
-               inRange = list(color = viridis(7)))
+rm (ChMap)
 
+```
+
+In the next step, the location of the selected bridge portfolio in this canton is visualized in an interactive map. For this, we first read in the data pertaining to the bridges themselves, and then the data linking these bridges with their longitude and latitude.
+
+```{r echo=FALSE}
+
+bridges_coordinates <- read_excel(paste(location,"Data/bridges_coordinates.xlsx", sep = "/"))
+ZolBgg <- bridge_data
+
+names <- na.omit(ZolBgg[,2]) # we create a vector with the bridge names that we can add the coordinates too 
+# we use this vector to then match the coordinates with the bridges, in order to visualize them on a map 
+
+#bridges_coordinates$Name
+names.bridges <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Chueelibach", "Du Lyssbach", "Jenskanal-Br.", "KDu Loeribach", 
+                   "PDu Horbengasse", "Plle Bruegg", "PU Schuepfen", "PU Bruegg mitte 3", "PU Busswil", "PU Lyss", "PU mitte 1", 
+                   "PU Muenchenbuchsee", "PU Oberfeldweg", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatten", 
+                   "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg",
+                   "SUe Steinweg", "U Bielstr.", "U Bielstrase", "U Neubrueckstrasse", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
+
+# we now rename the brige coordinates that we have
+# we will then use this to match the coordinates with the bridge names (for which we have deteoriation data)
+
+bridges_coordinates$Name <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Lyssbach", "Du Chueelibach", "Jenskanal-Br.", "KDu Loeribach", 
+                              "PDu Horbengasse", "Plle Bruegg", "PU Bruegg mitte 3", "no data", "no data", "no data", "no data", "no data", 
+                              "PU Busswil", "PU Lyss", "PU mitte 1", "no data", "no data", "no data", "no data", "no data", "PU Muenchenbuchsee", 
+                              "PU Oberfeldweg", "no data", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatte", 
+                              "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg", 
+                              "SUe Steinweg", "U Bielstr.", "U Bielstrasse", "U Neubrueckstrasse", "no data", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
+
+names.bridges <- as.data.frame(names.bridges)
+names.bridges$Name <- names.bridges$names.bridges
+
+bridges <- merge(names.bridges, bridges_coordinates, by = "Name", all.y = TRUE)
+#View(bridges) 
+bridges <- subset(bridges, bridges$Name != "no data") # we now have a dataset containing only the observations for which we have data available regarding their deterioration
+bridges.noNA <- na.omit(bridges)
+
+#ensuring lat and long are numbers
+bridges.noNA$longitude <- as.numeric(bridges.noNA$longitude)
+bridges.noNA$latitude <- as.numeric(bridges.noNA$latitude)
+
+#creating new spatial point dataframe
+bridges.SP <- SpatialPointsDataFrame(bridges.noNA[,c(3,4)], bridges.noNA[,-c(3,4)])
+
+bridge_map <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name))
+bridge_map
 ```
 
 In Switzerland asset managers use a scale of 1-5 to keep track of the condition of their asset. An example of the condition state definition are shown in the table below:
@@ -136,7 +136,7 @@ In Switzerland asset managers use a scale of 1-5 to keep track of the condition 
 
 : Definition of the condition states
 
-The first insight an asset manager wants to have is knowing the current condition of the assets. Such information also provides a basis for the predicting the evolution of the condition states over time. By having an interactive document, asset managers can easily get the latest overview of the condition of their assets. For example, the latest overall condition of the bridges in the mentioned line can be observed per each bridge category using the dynamic bar chart below.
+The first insight an asset manager wants to have is knowing the current condition of the assets. Such information also provides a basis for the predicting the evolution of the condition states over time. By having an interactive document, asset managers can easily get the latest overview of the condition of their assets. For example, the latest overall condition of the bridges in the mentioned line can be observed per each bridge category using the dynamic bar chart below. This is done by developing an interactive figure using `plotly` package in `shiny`. This enables developing such graphs in a shiny environment.
 
 ```{r select-input, echo=FALSE}
 
@@ -170,7 +170,8 @@ if (input$bridge_type == "ALL") {
 }
 } )
 ```
-The evolution of the condition states overtime are predicted using Markov chain modelling. 
+
+The evolution of the condition states overtime are predicted using Markov chain modelling.
 
 ```{r eval=FALSE, include=FALSE}
 selectInput(
@@ -204,7 +205,7 @@ selectInput(
 
 ```
 
-The evolution of the condition states overtime can be easily seen by moving the slide.
+The evolution of the condition states overtime can be easily seen by moving the slide. Such visualization is made by developing an shiny app.
 
 ```{r echo=FALSE}
 shinyAppDir(
@@ -235,7 +236,7 @@ data.SP <- SpatialPointsDataFrame(data[,c(7,8)], data[,-c(7,8)])
   
 m <- leaflet() %>% 
   addTiles() %>% 
-  addMarkers(data = data, lng= ~longitude, lat= ~latitude, popup= paste(data$Country, "<br>", data$Emissions) )
+  addMarkers(data = data, lng= ~longitude, lat= ~latitude, popup= paste(data$Country, "<br>", data$Emissions), clusterOptions = TRUE )
 
 m
 ```
@@ -252,5 +253,118 @@ shinyAppDir(
 
 ```
 
-=======
+Eileen's part - plotting the bridges in a map and adding condition states over the given years (to see the progression)
 
+```{r}
+library(readxl)
+library(sp)
+library(dplyr)
+library(leaflet)
+
+bridges_coordinates <- read_xlsx("bridges_coordinates.xlsx")
+ZolBgg <- read_xlsx("ZolBgg-xmp.xlsx")
+
+names <- na.omit(ZolBgg[,2])
+```
+
+we create a vector with the bridge names that we can add the coordinates too 
+we use this vector to then match the coordinates with the bridges, in order to visualize them on a map 
+
+```{r}
+bridges_coordinates$Name
+names.bridges <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Chueelibach", "Du Lyssbach", "Jenskanal-Br.", "KDu Loeribach",
+                   "PDu Horbengasse", "Plle Bruegg", "PU Schuepfen", "PU Bruegg mitte 3", "PU Busswil", "PU Lyss", "PU mitte 1", 
+                   "PU Muenchenbuchsee", "PU Oberfeldweg", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatten", 
+                   "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg",
+                   "SUe Steinweg", "U Bielstr.", "U Bielstrase", "U Neubrueckstrasse", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
+
+```
+
+we now rename the brige coordinates that we have
+we will then use this to match the coordinates with the bridge names (for which we have deteoriation data)
+
+```{r}
+bridges_coordinates$Name <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Lyssbach", "Du Chueelibach", "Jenskanal-Br.", "KDu Loeribach", 
+                              "PDu Horbengasse", "Plle Bruegg", "PU Bruegg mitte 3", "no data", "no data", "no data", "no data", "no data", 
+                              "PU Busswil", "PU Lyss", "PU mitte 1", "no data", "no data", "no data", "no data", "no data", "PU Muenchenbuchsee", 
+                              "PU Oberfeldweg", "no data", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatte", 
+                              "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg", 
+                              "SUe Steinweg", "U Bielstr.", "U Bielstrasse", "U Neubrueckstrasse", "no data", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
+
+names.bridges <- as.data.frame(names.bridges)
+names.bridges$Name <- names.bridges$names.bridges
+
+bridges <- merge(names.bridges, bridges_coordinates, by = "Name", all.y = TRUE)
+bridges <- subset(bridges, bridges$Name != "no data") 
+bridges.noNA <- na.omit(bridges)
+
+bridges.noNA$longitude <- as.numeric(bridges.noNA$longitude)
+bridges.noNA$latitude <- as.numeric(bridges.noNA$latitude)
+
+bridges.SP <- SpatialPointsDataFrame(bridges.noNA[,c(3,4)], bridges.noNA[,-c(3,4)])
+
+bridge_map <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name))
+bridge_map
+```
+
+We achieved a map of the bridges using their coordinates, and we now want to add the conditions to it. For this, I manually created a more readable csv file out of the original file displaying the bridge conditions. I did this only for two bidge parts, but the following code should also work for other parts. 
+
+```{r}
+write.csv(bridges.noNA, "bridges.file.csv") 
+bridges_conditions <- read.csv("bridges_conditions.csv", sep = ";")
+
+bridges_conditions <- bridges_conditions[,1:22]
+View(bridges_conditions)
+
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions$bridge_part, bridges_conditions$condition, bridges_conditions$year_1))
+m
+```
+this does not give us the desired result, so we add the possibility to plot the map for a specific bridge part and year
+we first create a table containing either the abutment or the bearings
+
+```{r}
+bridges_conditions.bearings <- subset(bridges_conditions, bridges_conditions$bridge_part == "bearings")
+bridges_conditions.abutment <- subset(bridges_conditions, bridges_conditions$bridge_part == "abutment")
+
+# first for the bearings
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.bearings$bridge_part, bridges_conditions.bearings$condition, bridges_conditions.abutment$year_1))
+m
+
+# now for the abutments
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.abutment$bridge_part, bridges_conditions.abutment$condition, bridges_conditions.abutment$year_1))
+m
+```
+
+it doesn't allow us to display all the condition states in the respective years. 
+we will instead plot the possibility for a condition 1 occurring, as it would indicate some degree of deterioation 
+this could then be used to gain information for potential repair work in the future
+as an example, doing it only for the abutments
+
+```{r}
+bridges_conditions.abutment.1 <- subset(bridges_conditions.abutment, bridges_conditions.abutment$condition == 1)
+
+# for year 1 
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.abutment.1$bridge_part, bridges_conditions.abutment.1$year_1))
+m
+
+
+# if we now want to see how this part would develop in 5 years, we can also plot this
+# for year 6 
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.abutment.1$bridge_part, bridges_conditions.abutment.1$year_6))
+m
+```
+
+this code for the map can be copied for the respective years we want to see the state of the abutments in 
+=======

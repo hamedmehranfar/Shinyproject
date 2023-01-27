@@ -1,9 +1,9 @@
 # This script is written to ensure all-
 # prerequisite materials are loaded to the system.
-
 #__________________________________
 # Adjust the program according to the platform
-require("parallel")
+
+library("parallel")
 sys_pltform <- R.version$os
 if (sys_pltform == "linux-gnu") {
   n_core <- (detectCores() - 1)
@@ -13,28 +13,20 @@ if (sys_pltform == "linux-gnu") {
   cat("This program works the best on Linux machines\n")
 }
 #__________________________________
-# Install the required packages
-
-#Function to check and install recognize packages
-pkg_test <- function(x) {
-  if (!require(x, character.only = TRUE)) {
-    install.packages(x, dep = TRUE)
-    if (!require(x, character.only = TRUE)) stop("Package not found")
-  }
-}
+# Loading the required packages
 
 # List the required packages in here
 
 pkg_list <- c("plotly", "shiny","lubridate","dplyr","echarts4r","viridisLite"
-              ,"jsonlite", "leaflet", "sp", "readxl"
+              ,"jsonlite", "leaflet", "sp", "readxl", "here"
               )
 
 # Check and install the packages and free the storage afterwards
-dum <- mclapply(pkg_list, pkg_test, mc.cores = n_core)
-rm(pkg_list, dum, pkg_test)
+dum <- mclapply(pkg_list, library, character.only = TRUE, mc.cores = n_core)
+rm(pkg_list)
 cat("Required packages are succecfully loaded!\n")
-
 #_____________________________________
+
 # This functions enables running all "sapply()"  in a parallel mode
 
 mcsapply <- function(X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE,
@@ -55,4 +47,3 @@ mcsapply <- function(X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE,
   else answer
 }
 cat("The initialisation was succeccful!\n")
-

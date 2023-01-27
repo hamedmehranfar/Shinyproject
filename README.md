@@ -60,9 +60,12 @@ In any case, you will need to open the document file, i.e., (**the_interactive_d
 The document has been coded in the way that it can take ultimate advantage of your machine's resources, i.e., parallel computing. However, parallel computing feature only works on Linux-based machines for the moment. 
 
 ## Using the weblink
-~~You can alternatively use the following link to interact with the document even if you do not have R installed on your machine.~~
 
-*This section is still under development the link will be updated once it is ready*
+You can alternatively use the following link to interact with the document even if you do not have R installed on your machine.
+
+http://shiny-group-project.loca.lt/
+
+*This section is still under development and the link might not be stable*
 
 # Credits
 This document is prepared with the collaboration of a group of four. The contribution of each memeber are listed as the following:
@@ -79,5 +82,4 @@ Developement of the shiny app for CO2 calculations.
 Development of the for visualization of the CO2 emission.
 
 ### [Hamed](https://github.com/hamed-93)
-Development of the block for visualization of condition states and their overview.
-Developement of the shiny app for evolution calculation.
+Development of the block for visualization of condition states and their overview, developement of the shiny app for evolution calculation, setting up a shiny server and deploying the interactive document on the server.
