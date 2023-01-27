@@ -1,0 +1,702 @@
+---
+title: "Exploring the use of Shiny in R Markdown"
+author: "Shinygroup"
+date: '2022'
+output: html_document
+runtime: shiny
+
+---
+
+```{r setup, include=FALSE}
+library(here)
+# Locating the file and setting up the work directory
+location <- here()
+setwd(location)
+# Loading the required packages and data 
+source(paste(location,"Preload.R", sep = "/"))
+source(paste(location,"data_prepration.R", sep = "/"))
+
+```
+
+The goal of this R Markdown document is to explore the use of Shiny for making interactive documents. Two topics are discussed in this document. The first chapter is dedicated to visualize how railway bridge components deteriorate overtime. This will provide asset managers with an overview of the how their assets behave overtime and what maintenance actives are needed. The second chapter visualizes the emission of CO2. The markdown will provide a countrywise emissions data and then provide a projected amount to be removed from the atmosphere by the year 2050. Also, it can show the user the percentage contribution of their carbon removal efforts in the total carbon dioxide curbs required by the year 2050.
+
+Multiple packages are used to maximize the interactivity of this document and bring the result of analysis at the tips of user fingers.
+
+## Chapter 1: Visualising the deterioration of railway bridges
+
+This document considers an illustrative example railway network located in the canton of Bern, Switzerland. Different visualizations are created to assist infrastructure mangers in their intervention planning process. The figure below shows the approximate location of the canton of Bern.
+
+```{r echo=FALSE}
+#```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+# map_data_ch <- map_data('world')[map_data('world')$region == "Switzerland",]
+# swiss_map <- ggplot() +
+  ## First layer: worldwide map
+#  geom_polygon(data = map_data("world"),
+#               aes(x=long, y=lat, group = group),
+#               color = '#9c9c9c', fill = '#f3f3f3') +
+  ## Second layer: Country map
+#  geom_polygon(data = map_data_ch,
+#               aes(x=long, y=lat, group = group),
+#               color = 'red', fill="#b01040") +
+#  coord_map() +
+#  coord_fixed(1.3,
+#              xlim = c(5.970019, 10.454590),
+#              ylim = c(45.83003, 47.77563)) +
+#  ggtitle("A map of Switzerland") +
+#  theme(panel.background =element_rect(fill = 'blue'))+
+#  theme(axis.title = element_blank())+
+#  theme(axis.ticks = element_blank())+
+#  theme(axis.text = element_blank())
+#swiss_map
+```
+
+```{r echo=FALSE}
+ChMap <- read_json("https://code.highcharts.com/mapdata/countries/ch/ch-all.geo.json")
+df <- data.frame(
+  region = c("Bern"), 
+  value = c(1)
+)
+df |> 
+  e_charts(region) |>
+  e_map_register("CH",ChMap) |> 
+  e_map(value, map = "CH") |> 
+  e_visual_map(value, inRange = list(color = viridis(2))) |>
+  e_dims(height="auto", width = "auto")
+  #e_theme("infographic")
+rm (ChMap)
+```
+
+In the next step, the location of the selected bridge portfolio in this canton is visualized in an interactive map. For this, we first read in the data pertaining to the bridges themselves, and then the data linking these bridges with their longitude and latitude.
+
+```{r echo=FALSE}
+bridges_coordinates <- read_excel(paste(location,"Data/bridges_coordinates.xlsx", sep = "/"))
+ZolBgg <- bridge_data
+names <- na.omit(ZolBgg[,2]) # we create a vector with the bridge names that we can add the coordinates too 
+# we use this vector to then match the coordinates with the bridges, in order to visualize them on a map 
+#bridges_coordinates$Name
+names.bridges <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Chueelibach", "Du Lyssbach", "Jenskanal-Br.", "KDu Loeribach", 
+                   "PDu Horbengasse", "Plle Bruegg", "PU Schuepfen", "PU Bruegg mitte 3", "PU Busswil", "PU Lyss", "PU mitte 1", 
+                   "PU Muenchenbuchsee", "PU Oberfeldweg", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatten", 
+                   "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg",
+                   "SUe Steinweg", "U Bielstr.", "U Bielstrase", "U Neubrueckstrasse", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
+# we now rename the brige coordinates that we have
+# we will then use this to match the coordinates with the bridge names (for which we have deteoriation data)
+bridges_coordinates$Name <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Lyssbach", "Du Chueelibach", "Jenskanal-Br.", "KDu Loeribach", 
+                              "PDu Horbengasse", "Plle Bruegg", "PU Bruegg mitte 3", "no data", "no data", "no data", "no data", "no data", 
+                              "PU Busswil", "PU Lyss", "PU mitte 1", "no data", "no data", "no data", "no data", "no data", "PU Muenchenbuchsee", 
+                              "PU Oberfeldweg", "no data", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatte", 
+                              "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg", 
+                              "SUe Steinweg", "U Bielstr.", "U Bielstrasse", "U Neubrueckstrasse", "no data", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
+names.bridges <- as.data.frame(names.bridges)
+names.bridges$Name <- names.bridges$names.bridges
+bridges <- merge(names.bridges, bridges_coordinates, by = "Name", all.y = TRUE)
+#View(bridges) 
+bridges <- subset(bridges, bridges$Name != "no data") # we now have a dataset containing only the observations for which we have data available regarding their deterioration
+bridges.noNA <- na.omit(bridges)
+#ensuring lat and long are numbers
+bridges.noNA$longitude <- as.numeric(bridges.noNA$longitude)
+bridges.noNA$latitude <- as.numeric(bridges.noNA$latitude)
+#creating new spatial point dataframe
+bridges.SP <- SpatialPointsDataFrame(bridges.noNA[,c(3,4)], bridges.noNA[,-c(3,4)])
+bridge_map <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name))
+bridge_map
+```
+
+In Switzerland asset managers use a scale of 1-5 to keep track of the condition of their asset. An example of the condition state definition are shown in the table below:
+
+| Condition state | Condition description | Damage description   |
+|-----------------|-----------------------|----------------------|
+| 1               | Good                  | None                 |
+| 2               | Acceptable            | Minor                |
+| 3               | Damaged               | Significant          |
+| 4               | Poor                  | Extensive            |
+| 5               | Alarmin               | Safety is endangered |
+
+: Definition of the condition states
+
+The first insight an asset manager wants to have is knowing the current condition of the assets. Such information also provides a basis for the predicting the evolution of the condition states over time. By having an interactive document, asset managers can easily get the latest overview of the condition of their assets. For example, the latest overall condition of the bridges in the mentioned line can be observed per each bridge category using the dynamic bar chart below. This is done by developing an interactive figure using `plotly` package in `shiny`. This enables developing such graphs in a shiny environment.
+
+```{r select-input, echo=FALSE}
+# Getting the input
+   selectInput(
+  inputId = 'bridge_type',
+  label = 'Please specify the type of the bridges',
+  choices = list('ALL',
+                 'Concrete',
+                 'Masonry',
+                 'Composite',
+                 'Steel')
+)
+# Producing the right graph according to the input!
+renderPlotly( {
+bridge_typ <- input$bridge_type
+if (input$bridge_type == "ALL") {
+  
+  bar_data_2 <- components %>% count(Type, CS) %>% group_by(Type) %>% mutate(probability = (n/sum(n)*100))
+  bar_plot_2<- plot_ly(bar_data_2, x = ~Type, y = ~probability , color = ~CS ,type = "bar",
+                     text = ~probability %>% round() ) %>% layout(yaxis = list(ticksuffix = "%") ) 
+  
+} else {
+  
+  bar_data_2 <- components %>% filter(Type == bridge_typ) %>% count(Type, CS) %>% group_by(Type) %>% 
+    mutate(probability = (n/sum(n)*100))
+  bar_plot_2<- plot_ly(bar_data_2, x = ~Type, y = ~probability , color = ~CS ,type = "bar",
+                     text = ~probability %>% round() ) %>% layout(yaxis = list(ticksuffix = "%") ) 
+}
+} )
+```
+
+The evolution of the condition states overtime are predicted using Markov chain modelling.
+
+```{r eval=FALSE, include=FALSE}
+selectInput(
+        inputId = 'component_id',
+        label = 'Please specify the component',
+        choices = unique(bridge_data$MixName)
+)
+      # Input: Select the random distribution type ----
+      sliderInput(inputId = "date_year", label = "Selected year:",
+                  min = year(today()), max = year(today())+14, value = year(today()), step = 1,
+                  animate = animationOptions(interval = 500, loop = TRUE), sep = "")
+ renderPlotly({
+    # Prepare the data for plotting
+    
+    plt_data <- bridge_data %>% filter(MixName == input$component_id) %>% select(all_of(as.character(c((year(today())):input$date_year))))
+    plt_data <- as.data.frame (t(plt_data))
+    plt_data <- `colnames<-`(plt_data,c(1:5))
+    
+    
+    fig_2<- plot_ly(plt_data, y =~`1` , x =rownames(plt_data), name = 'CS1' ,
+                    type = 'scatter', mode = 'none', stackgroup = 'one', groupnorm = 'percent')
+    fig_2 <- fig_2 %>% add_trace(y = ~`2`, name = 'CS2')
+    fig_2 <- fig_2 %>% add_trace(y = ~`3`, name = 'CS3')
+    fig_2 <- fig_2 %>% add_trace(y = ~`4`, name = 'CS4')
+    fig_2 <- fig_2 %>% add_trace(y = ~`5`, name = 'CS5')
+    fig_2 <- fig_2 %>% layout(title = 'Evolution of condition states over time', 
+                              xaxis = list(title = 'Year'), yaxis = list(title = 'Percentage') 
+         )
+  })
+```
+
+The evolution of the condition states overtime can be easily seen by moving the slide. Such visualization is made by developing an shiny app.
+
+```{r echo=FALSE}
+shinyAppDir(
+  paste(location, "apps","evo", sep= "/"),
+  options = list(
+    width = "100%", height = 550
+  )
+)
+```
+
+## Chapter 2: Worldwide CO2 Emissions
+
+CO2 emissions refer to the release of carbon dioxide into the atmosphere, primarily from the burning of fossil fuels such as coal, oil, and natural gas. These emissions contribute to global warming and climate change, leading to rising temperatures and severe weather events.
+
+Following is the World Map to show various countries and their emissions in the year 2016.
+
+```{r echo=FALSE}
+data <- read.csv(paste(location,"Data/emissions.csv", sep = "/"))
+#Filling any left coordinates
+data <- data[complete.cases(data),]
+#ensuring lat and long are numbers
+data$longitude <- as.numeric(data$longitude)
+data$latitude <- as.numeric(data$latitude)
+#creating new spatial point dataframe
+data.SP <- SpatialPointsDataFrame(data[,c(7,8)], data[,-c(7,8)])
+  
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = data, lng= ~longitude, lat= ~latitude, popup= paste(data$Country, "<br>", data$Emissions), clusterOptions = TRUE )
+m
+```
+The need to achieve net zero emissions by 2050 is crucial in order to prevent further damage to the planet and mitigate the effects of climate change. Achieving net zero emissions means reducing the amount of CO2 released into the atmosphere to the point where it is balanced out by the amount of CO2 that is removed, such as through reforestation and carbon capture technology. This will not only help to slow down the warming of the planet but also prevent the worst impacts of climate change such as droughts, sea-level rise and extreme weather events.
+
+
+The rate at which CO2 must be removed from the atmosphere in order to reach net-neutrality by 2050 will depend on a number of factors, such as the rate at which global emissions are reduced, the effectiveness of carbon removal technologies, and the ability to scale up their deployment.
+
+The Intergovernmental Panel on Climate Change (IPCC) estimates that we will need to remove between 100 and 1000 GtCO2 from the atmosphere by 2050 in order to have a likely chance of keeping global warming below 1.5 degrees Celsius. This means that we would need to remove between 2 and 20 GtCO2 per year.
+
+It's important to note that this is a challenging goal, and it will require significant international cooperation and investment in new technologies. Furthermore, this removal rate is not well defined since it's based on different scenarios and the real-world implementation of these projections depends on the political will and the availability of the technology to implement it.
+
+Additionally, it's important to note that removing CO2 from the atmosphere is still an emerging field and there is still a lot of research being done on how to most effectively and efficiently remove CO2.
+```{r echo=FALSE}
+removal <- read.csv(paste(getwd(),"Data/removal.csv", sep = "/"))
+xValue <- removal$Year
+yValue <- removal$Emissions
+data <- data.frame(xValue,yValue)
+
+# Plot
+ggplot(data, aes(x=xValue, y=yValue)) +
+  xlab(bquote(Year))+
+  ylab(bquote(Amount~of~CO[2]~needed~to~be~removed)) +ggtitle(bquote(Rough~Projection~of~CO[2]~to~be~removed~by~2050~to~achieve~net-Zero)) + geom_line()
+```
+
+This tool helps you to realize the amount of CO2 reduction one needs to do to achieve net neutrality. This markdown assumes that all the industrial emissions are for goods which is to be ultimately used by/for the people, and averages the industrial emissions onto the whole world population.
+
+With below tool you can see how much plants and food wastage avoidance every single person needs to do in order to achieve net-neutrality by the year 2050.
+
+There are a lot of factors that affect the emissions of CO2. This document is rudimentary in terms of predicting emission free technology's evolution. Hence, assuming that by 2050 technology doesn't improve and we continue to emit the same amount of CO2.
+
+With sliders below
+1.) Select how much trees each individual on earth needs to plant
+2.) Select how much food wastage each individual on earth needs to avoid
+
+The selected parameters are then extrapolated to 7.88 billion people of Earth with following data-
+1.) Each tree absorbs 25kg of CO2 every year.
+2.) Each kg of food wasted emits 2.5 kg of Green House Gases or 2.5 kg of CO2e (CO2 equivalent)
+```{r echo=FALSE}
+shinyAppDir(
+  paste(location, "apps","emission", sep= "/"),
+  options = list(
+    width = "100%", height = 550
+  )
+)
+```
+<<<<<<< HEAD
+=======
+# Chaper 3: 
+Jonas part
+
+Explanations: 
+
+```{r echo=FALSE}
+
+
+####################################################################
+### Calculation of working hours, concrete use and CO2 emissions ###
+####################################################################
+
+# Illustration of the annual input demand through gg-plot
+
+# Explanation:
+
+# We prepare the dataset for the estimation of input use demand and a more effective construction planing.
+
+# First, we calculate the annual 'status' of each bridge in each year.
+# Second, we create a shiny app for bridge constructors to enable them to distribute the working efforts over the whole observation period.
+
+
+### packages ###
+
+require(readxl)
+require(dplyr)
+require(data.table)
+require(ggplot2)
+require(tidyr)
+require(shiny)
+
+
+### Data_Input ### 
+
+bridge_data_1 <- bridge_data
+
+
+### rename year columns ###
+
+colnames(bridge_data_1)[6]  <- "year1"
+colnames(bridge_data_1)[7]  <- "year2"
+colnames(bridge_data_1)[8]  <- "year3"
+colnames(bridge_data_1)[9]  <- "year4"
+colnames(bridge_data_1)[10] <- "year5"
+colnames(bridge_data_1)[11] <- "year6"
+colnames(bridge_data_1)[12] <- "year7"
+colnames(bridge_data_1)[13] <- "year8"
+colnames(bridge_data_1)[14] <- "year9"
+colnames(bridge_data_1)[15] <- "year10"
+colnames(bridge_data_1)[16] <- "year11"
+colnames(bridge_data_1)[17] <- "year12"
+colnames(bridge_data_1)[18] <- "year13"
+colnames(bridge_data_1)[19] <- "year14"
+colnames(bridge_data_1)[20] <- "year15"
+
+
+### Pre-Step: Calculation of annual status --> value for different qualities each year ###
+
+
+bridge_data_1 <- bridge_data_1 %>% mutate(across(year1:year15,~ .x*CS)) 
+
+
+### number of observations per bridge ###
+
+
+obs_per_bridge <- bridge_data_1 %>% count(MixName)
+
+bridge_data_1 <- merge(bridge_data_1, obs_per_bridge)
+
+
+### Calculation of annual status of each bridge ###
+years_vector <- c((year(today())):(year(today())+n_years-1))
+bridge_status <- bridge_data_1 %>% 
+  group_by(MixName) %>% 
+  summarise(across(year1:year15, sum))
+
+bridge_status <- merge(bridge_status, obs_per_bridge)
+
+
+### Overall percentage value of bridge status ###
+
+bridge_status_new <- bridge_status[,2:16]/bridge_status[,17]  
+
+
+bridge_status <- cbind(bridge_status[,c(1,17)], bridge_status_new )
+
+
+### Diff of each year to detect construction work ###
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year1 = if_else(year2 < year1,
+                                year1 - year2,0))
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year2 = if_else(year3 < year2,
+                                year2 - year3,0))
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year3 = if_else(year4 < year3,
+                                year3 - year4,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year4 = if_else(year5 < year4,
+                                year4 - year5,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year5 = if_else(year6 < year5,
+                                year5 - year6,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year6 = if_else(year7 < year6,
+                                year6 - year7,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year7 = if_else(year8 < year7,
+                                year7 - year8,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year8 = if_else(year9 < year8,
+                                year8 - year9,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year9 = if_else(year10 < year9,
+                                year9 - year10,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year10 = if_else(year11 < year10,
+                                 year10 - year11,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year11 = if_else(year12 < year11,
+                                 year11 - year12,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year12 = if_else(year13 < year12,
+                                 year12 - year13,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year13 = if_else(year14 < year13,
+                                 year13 - year14,0))
+
+
+bridge_status <- bridge_status %>% 
+  mutate(constr_year14 = if_else(year15 < year14,
+                                 year14 - year15,0))
+
+
+
+### construction sum per year ###
+
+bridge_status$year1_sum <- sum(bridge_status$constr_year1)
+bridge_status$year2_sum <- sum(bridge_status$constr_year2)
+bridge_status$year3_sum <- sum(bridge_status$constr_year3)
+bridge_status$year4_sum <- sum(bridge_status$constr_year4)
+bridge_status$year5_sum <- sum(bridge_status$constr_year5)
+bridge_status$year6_sum <- sum(bridge_status$constr_year6)
+bridge_status$year7_sum <- sum(bridge_status$constr_year7)
+bridge_status$year8_sum <- sum(bridge_status$constr_year8)
+bridge_status$year9_sum <- sum(bridge_status$constr_year9)
+bridge_status$year10_sum <- sum(bridge_status$constr_year10)
+bridge_status$year11_sum <- sum(bridge_status$constr_year11)
+bridge_status$year12_sum <- sum(bridge_status$constr_year12)
+bridge_status$year13_sum <- sum(bridge_status$constr_year13)
+bridge_status$year14_sum <- sum(bridge_status$constr_year14)
+
+
+
+# plot annual construction for all bridges in total throughout the observation period
+
+
+bridge_status_sum_plot <- bridge_status[1,c(1,32:45)]
+
+
+bridge_status_plot_long <- melt(setDT(bridge_status_sum_plot), id.vars = c("MixName"))
+
+
+bridge_status_plot_long$year <- c(1,2,3,4,5,6,7,8,9,10,11,12,13,14)
+
+
+construction_time <- ggplot(bridge_status_plot_long, aes(x=year, y=value)) + geom_point()
+
+
+##################################
+##################################
+
+# Definition of input use for construction activities:
+
+# Each "construction unit" requires the following imaginary inputs 
+
+working_hours <- 1000 # hours
+
+concrete_use <- 5000  # tonnes
+
+CO2_emissions <- 2000 # tonnes
+
+
+
+##################################
+##################################
+
+
+# Construction requirements and cots for each bridge 
+
+
+bridge_construction_hours <- bridge_status[,c(1,18:31)]
+
+
+# Calculation of input requirements of each bridge
+
+# Explanation:
+
+# Through our work, we offer a tool for construction managers that they can distribute the input demand during a certain time-frame.
+# Right now, all construction is accumulated in the years 10 and 11, which is quite unrealistic.
+
+# First, construction companies probably do not have the work force to construction more than 100 bridges in the same year.
+# Second, it would be really problematic for the people who actually need to use the highway to go to work etc, because the highway would be one big construction side.
+
+# Hence, distributing the construction efforts smoothly throughout the year would have both advantages for construction companies and highway users.
+
+# Further, we add an additional plot for the CO2 emissions associated with annual bridge building. This could be an interesting tool for managing CO2 emissions in Swiss (traffic) construction. 
+
+
+# plot 1: working hours
+
+bridge_construction_hours <- bridge_construction_hours %>% 
+  mutate_at(vars(constr_year1:constr_year14),
+            .funs = funs(. * 1000))
+
+
+bridge_construction_hours <- setnames(bridge_construction_hours, 
+                                      old = c('constr_year1','constr_year2','constr_year3','constr_year4','constr_year5','constr_year6',
+                                              'constr_year7','constr_year8','constr_year9','constr_year10','constr_year11','constr_year12',
+                                              'constr_year13','constr_year14'), 
+                                      new = c('y1','y2','y3','y4','y5','y6',
+                                              'y7','y8','y9','y10','y11','y12',
+                                              'y13','y14'))
+
+
+hours_long <- gather(bridge_construction_hours, year, Working_Hours, y1:y14, factor_key=TRUE)
+
+
+hours_plot <- ggplot(data=hours_long, aes(x=year, y=Working_Hours, group=MixName)) +
+  geom_line() + scale_x_discrete(labels=years_vector) + 
+  ggtitle("Annual construction working hours by bridge")  + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+ggplotly(hours_plot)
+
+```
+
+<<<<<<< HEAD
+Eileen's part - plotting the bridges in a map and adding condition states over the given years (to see the progression)
+
+```{r}
+library(readxl)
+library(sp)
+library(dplyr)
+library(leaflet)
+
+bridges_coordinates <- read_xlsx("bridges_coordinates.xlsx")
+ZolBgg <- read_xlsx("ZolBgg-xmp.xlsx")
+
+names <- na.omit(ZolBgg[,2])
+```
+
+we create a vector with the bridge names that we can add the coordinates too 
+we use this vector to then match the coordinates with the bridges, in order to visualize them on a map 
+
+```{r}
+bridges_coordinates$Name
+names.bridges <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Chueelibach", "Du Lyssbach", "Jenskanal-Br.", "KDu Loeribach",
+                   "PDu Horbengasse", "Plle Bruegg", "PU Schuepfen", "PU Bruegg mitte 3", "PU Busswil", "PU Lyss", "PU mitte 1", 
+                   "PU Muenchenbuchsee", "PU Oberfeldweg", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatten", 
+                   "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg",
+                   "SUe Steinweg", "U Bielstr.", "U Bielstrase", "U Neubrueckstrasse", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
+
+```
+
+we now rename the brige coordinates that we have
+we will then use this to match the coordinates with the bridge names (for which we have deteoriation data)
+
+```{r}
+bridges_coordinates$Name <- c("Aarebr. Bruegg", "Aareviad Busswil", "Du Lyssbach", "Du Chueelibach", "Jenskanal-Br.", "KDu Loeribach", 
+                              "PDu Horbengasse", "Plle Bruegg", "PU Bruegg mitte 3", "no data", "no data", "no data", "no data", "no data", 
+                              "PU Busswil", "PU Lyss", "PU mitte 1", "no data", "no data", "no data", "no data", "no data", "PU Muenchenbuchsee", 
+                              "PU Oberfeldweg", "no data", "PU Studen Station", "PU Suberg", "SU Brueggstrasse Sued", "SU Fluehmatte", 
+                              "SU Leueren Blaumatt", "SU Muehleplatz", "SU Murgeli", "SU Rosengasse", "SU Schwanden", "SU Studen", "SUe Bruegg", 
+                              "SUe Steinweg", "U Bielstr.", "U Bielstrasse", "U Neubrueckstrasse", "no data", "Ue Brueggstrasse", "WU Friedhof", "WU Holen")
+
+names.bridges <- as.data.frame(names.bridges)
+names.bridges$Name <- names.bridges$names.bridges
+
+bridges <- merge(names.bridges, bridges_coordinates, by = "Name", all.y = TRUE)
+bridges <- subset(bridges, bridges$Name != "no data") 
+bridges.noNA <- na.omit(bridges)
+
+bridges.noNA$longitude <- as.numeric(bridges.noNA$longitude)
+bridges.noNA$latitude <- as.numeric(bridges.noNA$latitude)
+
+bridges.SP <- SpatialPointsDataFrame(bridges.noNA[,c(3,4)], bridges.noNA[,-c(3,4)])
+
+bridge_map <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name))
+bridge_map
+```
+
+We achieved a map of the bridges using their coordinates, and we now want to add the conditions to it. For this, I manually created a more readable csv file out of the original file displaying the bridge conditions. I did this only for two bidge parts, but the following code should also work for other parts. 
+
+```{r}
+write.csv(bridges.noNA, "bridges.file.csv") 
+bridges_conditions <- read.csv("bridges_conditions.csv", sep = ";")
+
+bridges_conditions <- bridges_conditions[,1:22]
+View(bridges_conditions)
+
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions$bridge_part, bridges_conditions$condition, bridges_conditions$year_1))
+m
+```
+this does not give us the desired result, so we add the possibility to plot the map for a specific bridge part and year
+we first create a table containing either the abutment or the bearings
+
+```{r}
+bridges_conditions.bearings <- subset(bridges_conditions, bridges_conditions$bridge_part == "bearings")
+bridges_conditions.abutment <- subset(bridges_conditions, bridges_conditions$bridge_part == "abutment")
+
+# first for the bearings
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.bearings$bridge_part, bridges_conditions.bearings$condition, bridges_conditions.abutment$year_1))
+m
+
+# now for the abutments
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.abutment$bridge_part, bridges_conditions.abutment$condition, bridges_conditions.abutment$year_1))
+m
+```
+
+it doesn't allow us to display all the condition states in the respective years. 
+we will instead plot the possibility for a condition 1 occurring, as it would indicate some degree of deterioation 
+this could then be used to gain information for potential repair work in the future
+as an example, doing it only for the abutments
+
+```{r}
+bridges_conditions.abutment.1 <- subset(bridges_conditions.abutment, bridges_conditions.abutment$condition == 1)
+
+# for year 1 
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.abutment.1$bridge_part, bridges_conditions.abutment.1$year_1))
+m
+
+
+# if we now want to see how this part would develop in 5 years, we can also plot this
+# for year 6 
+m <- leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(data = bridges.noNA, lng= ~longitude, lat= ~latitude, popup= paste(bridges.noNA$Name, bridges_conditions.abutment.1$bridge_part, bridges_conditions.abutment.1$year_6))
+m
+```
+
+this code for the map can be copied for the respective years we want to see the state of the abutments in 
+=======
+=======
+
+```{r echo=FALSE}
+# plot 2: concrete use 
+
+bridge_construction_concrete <- bridge_status[,c(1,18:31)]
+
+bridge_construction_concrete <- bridge_construction_concrete %>% 
+  mutate_at(vars(constr_year1:constr_year14),
+            .funs = funs(. * 1000))
+
+
+setnames(bridge_construction_concrete, 
+         old = c('constr_year1','constr_year2','constr_year3','constr_year4','constr_year5','constr_year6',
+                 'constr_year7','constr_year8','constr_year9','constr_year10','constr_year11','constr_year12',
+                 'constr_year13','constr_year14'), 
+         new = c('y1','y2','y3','y4','y5','y6',
+                 'y7','y8','y9','y10','y11','y12',
+                 'y13','y14'))
+
+concrete_long <- gather(bridge_construction_concrete, year, Concrete_Use, y1:y14, factor_key=TRUE)
+
+
+concrete_plot <- ggplot(data=concrete_long, aes(x=year, y=Concrete_Use, group=MixName)) +
+  geom_line() + scale_x_discrete(labels=years_vector) + 
+  ggtitle("Annual concrete use by bridge")  + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+ggplotly(concrete_plot)
+
+```
+
+
+```{r echo=FALSE}
+# plot 3: CO2 
+
+bridge_construction_co2 <- bridge_status[,c(1,18:31)]
+
+bridge_construction_co2 <- bridge_construction_co2 %>% 
+  mutate_at(vars(constr_year1:constr_year14),
+            .funs = funs(. * 2000))
+
+
+setnames(bridge_construction_co2, 
+         old = c('constr_year1','constr_year2','constr_year3','constr_year4','constr_year5','constr_year6',
+                 'constr_year7','constr_year8','constr_year9','constr_year10','constr_year11','constr_year12',
+                 'constr_year13','constr_year14'), 
+         new = c('y1','y2','y3','y4','y5','y6',
+                 'y7','y8','y9','y10','y11','y12',
+                 'y13','y14'))
+
+co2_long <- gather(bridge_construction_co2, year, Concrete_Use, y1:y14, factor_key=TRUE)
+
+
+co2_plot <- ggplot(data=co2_long, aes(x=year, y=Concrete_Use, group=MixName)) +
+  geom_line() + scale_x_discrete(labels=years_vector) + 
+  ggtitle("Annual CO2 emissions during construction by bridge")  + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggplotly(co2_plot)
+
+```
+>>>>>>> d344e6c9eb8b1d42ac1e950f8d70b2bf6e5069d0
+>>>>>>> deb34994f75773523515bdf12dea0dbc9f7497d8
