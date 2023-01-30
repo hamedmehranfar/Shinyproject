@@ -18,7 +18,7 @@ source(paste(location,"data_prepration.R", sep = "/"))
 
 ```
 
-The goal of this R Markdown document is to explore the use of Shiny for making interactive documents. Two topics are discussed in this document. The first chapter is dedicated to visualize how railway bridge components deteriorate overtime. This will provide asset managers with an overview of the how their assets behave overtime and what maintenance actives are needed. The second chapter visualizes the emission of CO2. The markdown will provide a countrywise emissions data and then provide a projected amount to be removed from the atmosphere by the year 2050. Also, it can show the user the percentage contribution of their carbon removal efforts in the total carbon dioxide curbs required by the year 2050.
+The goal of this R Markdown document is to explore the use of Shiny for making interactive documents. Two topics are discussed in this document. The first chapter is dedicated to visualize how railway bridge components deteriorate overtime. This will provide asset managers with an overview of the how their assets behave overtime and what maintenance actives are needed. The second chapter visualizes the emission of CO2. The markdown will provide a country-wise emissions data and then provide a projected amount to be removed from the atmosphere by the year 2050. Also, it can show the user the percentage contribution of their carbon removal efforts in the total carbon dioxide curbs required by the year 2050. The third chapter provides a discussion on how the execution of intervention activities impacts the emission of CO2. Finally, the appendix provides an overview of the steps to show the condition of the bridges on an interactive map.
 
 Multiple packages are used to maximize the interactivity of this document and bring the result of analysis at the tips of user fingers.
 
@@ -264,7 +264,7 @@ Then, we calculate the annual 'status' of each bridge in each year.
 Finally, we create a shiny app for bridge constructors to enable them to distribute the working efforts over the whole observation period.
 
 Through our work, we offer a tool for construction managers that they can distribute the input demand during a certain time-frame. 
-Right now, all construction is accumulated in the years 10 and 11, which is quite unrealistic. First, construction companies probably do not have the work force to construction more than 100 bridges in the same year. Second, it would be really problematic for the people who actually need to use the highway to go to work etc, because the highway would be one big construction side. Hence, distributing the construction efforts smoothly throughout the year would have both advantages for construction companies and highway users. Further, we add an additional plot for the CO2 emissions associated with annual bridge building. This could be an interesting tool for managing CO2 emissions in Swiss (traffic) construction. 
+Right now, all construction is accumulated in the years 10 and 11, which is quite unrealistic. First, construction companies probably do not have the work force to construction more than 100 bridges in the same year. Second, it would be really problematic for the people who actually need to use the highway to go to work etc, because the highway would be one big construction side. Hence, distributing the construction efforts smoothly throughout the year would have both advantages for construction companies and highway users. Further, we add an additional plot for the CO2 emissions associated with annual bridge building. This could be an interesting tool for managing CO2 emissions in Swiss (traffic) construction. Blow, three illustrations are made with respect to the CO2 emission associated with carrying out maintenace activites on the bridges mentioed in Chaper 1.
 ```{r echo=FALSE}
 
 
@@ -649,8 +649,8 @@ bridge_map
 We achieved a map of the bridges using their coordinates, and we now want to add the conditions to it. For this, I manually created a more readable csv file out of the original file displaying the bridge conditions. I did this only for two bidge parts, but the following code should also work for other parts. 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-write.csv(bridges.noNA, "bridges.file.csv") 
-bridges_conditions <- read.csv("bridges_conditions.csv", sep = ";")
+#write.csv(bridges.noNA, "bridges.file.csv") 
+bridges_conditions <- read.csv(paste(location,"Data/bridges_conditions.csv", sep= "/"), sep = ";")
 
 bridges_conditions <- bridges_conditions[,1:22]
 #View(bridges_conditions)
