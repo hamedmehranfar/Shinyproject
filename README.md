@@ -14,6 +14,8 @@ The structure of the project is as the following:
   * Visualization-new.qgz
   * ZolBgg-xmp.xlsx
   * emissions.csv
+  * removal.csv
+  * bridges_condition.csv
 * apps
   * emission
     * app.R
@@ -21,13 +23,15 @@ The structure of the project is as the following:
     * app.R
 * data_prepration.R
 * preload.R
-* README.md
-* the_interactive_document.Rmd
+* Eileen_code.R
 * ShinyProject.Rproj
 * Input_Use_construction.R
+* bridge_status_shiny.R
 * .Rdata
 * .gitignore
 * test.R
+* README.md
+* the_interactive_document.Rmd
 
 
 # How to run the document
@@ -38,6 +42,7 @@ There are two ways that you can run run the interactice doument:
 ## Local machine
 ### Simplest approach
 To be able to run the document on your machine, the simplest way is to download the project folder by clicking on the link below:
+
 https://github.com/hamed-93/Shinyproject/archive/refs/heads/main.zip
 
 After extracting the Zip file, you can open the document file **the_interactive_document.Rmd** and run it. In the first time, it might take some time to load (and probably install) all the required packages. 
@@ -65,21 +70,19 @@ You can alternatively use the following link to interact with the document even 
 
 http://shiny-group-project.loca.lt/
 
-*This section is still under development and the link might not be stable*
+*This section is still under development and the link might not be stable. In case of any trouble please contact mehranfar@ibi.baug.ethz.ch*
 
 # Credits
 This document is prepared with the collaboration of a group of four. The contribution of each memeber are listed as the following:
 
 ### [Eileen](https://github.com/eileenziehmann)
-Visualization of the bridge locations.
+Visualization of the bridge locations and their condition states on an interactive map. 
 
 ### [Jonas](https://github.com/jonas121991)
-Developement of the block for calculating the work demand for maintenance activites and related CO2 emission.
-
+Developement of the block for calculating the work demand for maintenance activites and related CO2 emission as well as related visualizations.
 
 ### [Hitesh](https://github.com/hitesh-ethz)
-Developement of the shiny app for CO2 calculations.
-Development of the for visualization of the CO2 emission.
+Developement of the shiny app for CO2 calculations. Development of the for visualization of the CO2 emission. 
 
 ### [Hamed](https://github.com/hamed-93)
 Development of the block for visualization of condition states and their overview, developement of the shiny app for evolution calculation, setting up a shiny server and deploying the interactive document on the server.
