@@ -5,8 +5,11 @@ library(sp)
 library(dplyr)
 library(leaflet)
 
-bridges_coordinates <- read_xlsx("bridges_coordinates.xlsx")
-ZolBgg <- read_xlsx("ZolBgg-xmp.xlsx")
+
+bridges_coordinates <- read_excel(paste(location,"Data/bridges_coordinates.xlsx", sep = "/"))
+ZolBgg <- read_excel(paste(location,"Data/ZolBgg-xmp.xlsx", sep = "/"))
+#bridges_coordinates <- read_xlsx("bridges_coordinates.xlsx")
+#ZolBgg <- read_xlsx("ZolBgg-xmp.xlsx")
 
 names <- na.omit(ZolBgg[,2]) # we create a vector with the bridge names that we can add the coordinates too 
 # we use this vector to then match the coordinates with the bridges, in order to visualize them on a map 
