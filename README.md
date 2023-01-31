@@ -68,7 +68,7 @@ The document has been coded in the way that it can take ultimate advantage of yo
 
 You can alternatively use the following link to interact with the document even if you do not have R installed on your machine.
 
-http://shiny-group-projekt.loca.lt/
+http://shiny-group-project.loca.lt/
 
 *This section is still under development and the link might not be stable. In case of any trouble please contact mehranfar@ibi.baug.ethz.ch*
 
